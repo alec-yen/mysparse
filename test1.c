@@ -5,15 +5,37 @@
 /*add_jac test*/
 int main()
 {
-	jac_mat Thisiswrong;
+	int m = 6;
+	int n = 7;
+	jac_storage[0] = cs_spalloc (m,n,m*n,1,1);
+	jac_storage[1] = cs_spalloc (m,n,m*n,1,1);
+	jac_storage[2] = cs_spalloc (m,n,m*n,1,1);
+	jac_storage[3] = cs_spalloc (m,n,m*n,1,1);
+	jac_storage[4] = cs_spalloc (m,n,m*n,1,1);
+	jac_storage[5] = cs_spalloc (m,n,m*n,1,1);
+	jac_storage[6] = cs_spalloc (m,n,m*n,1,1);
+	jac_storage[7] = cs_spalloc (m,n,m*n,1,1);
+
+	jac_mat s = Gy;
 	int r[] = {1,2,3,0,2,4,1,5,0,1,3,2,4,0,5};
 	int c[] = {0,0,0,1,1,1,3,3,4,4,4,5,5,6,6};
 	double v[] = {4,7,10,1,8,12,5,14,2,6,11,9,13,3,15};
 	int size = sizeof(r)/sizeof(r[0]);
 
-	cs* T = add_jac (Fx,r,c,v,size);
+	cs* T = add_jac (s,r,c,v,size);
+//	cs* T = ucreate_full (r,c,v,size);
 	cs_print (T,0);
-	cs_spfree (T);
+//	cs_spfree (T);
+
+	cs_spfree (jac_storage[0]);
+	cs_spfree (jac_storage[1]);
+	cs_spfree (jac_storage[2]);
+	cs_spfree (jac_storage[3]);
+	cs_spfree (jac_storage[4]);
+	cs_spfree (jac_storage[5]);
+	cs_spfree (jac_storage[6]);
+	cs_spfree (jac_storage[7]);
+
 }
 
 /*print test*/
