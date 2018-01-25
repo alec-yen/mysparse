@@ -16,7 +16,7 @@ cs* ucreate_full (int *r, int *c, double *v, int size)
     for (k=1;k<size;k++) { if (c[k]>max) { max = c[k]; } }
     n = max;
     m++; n++;
-    T = cs_spalloc (m,n,m*n,1,1);
+    T = cs_spalloc (m,n,m*n,1,1); //check this line m*n vs size
     for (k=0;k<size;k++)
     {
         if (!cs_entry(T,r[k],c[k],v[k]))

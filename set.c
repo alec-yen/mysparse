@@ -6,14 +6,13 @@
 void set(cs *A, int r, int c, double v)
 {
 
-	int index1,index2,k;
-	int t,s; /*index*/
+	int cp1,cp2,k,t; /*index*/
 	int newmax = A->nzmax + 1;
-	int ok = 1;   
+	int ok = 1;
 
-	index1 = A->p[c]; /*index of Ci and Cx array to start iteration*/
-	index2 = A->p[c+1];
-	for (k = index1; k < index2; k++){
+	cp1 = A->p[c]; /*index of Ci and Cx array to start iteration*/
+	cp2 = A->p[c+1];
+	for (k = cp1; k < cp2; k++){
 		if (A->i[k] > r){
 			break;
 		}
@@ -24,9 +23,9 @@ void set(cs *A, int r, int c, double v)
 	}
 	A->i = cs_realloc (A->i,newmax,sizeof(CS_INT),&ok);
 	A->x = cs_realloc (A->x,newmax,sizeof(CS_ENTRY),&ok);
-	for (s=A->nzmax; s>k; s--){ /*shift values after index k to right*/
-		A->i[s] = A->i[s-1];
-		A->x[s] = A->x[s-1];
+	for (t=A->nzmax; t>k; t--){ /*shift values after index k to right*/
+		A->i[t] = A->i[t-1];
+		A->x[t] = A->x[t-1];
 	}
 	A->i[k] = r;
 	A->x[k] = v;

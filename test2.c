@@ -41,7 +41,7 @@ int main()
 				if (!test)
 				{
 					printf ("%.2f at index (%d,%d) added\n",v,r,c);
-					T = add (T,r,c,v);
+					set (T,r,c,v);
 				}
 				else if (test == 999)
 				{printf ("Index (%d,%d) outside %d by %d matrix\n",r,c,m,n);}

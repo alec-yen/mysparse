@@ -22,16 +22,34 @@ void csc (const cs *A)
 
 void print (const cs *A)
 {
-	printf ("%d-by-%d matrix of %d elements\n",A->m,A->n,A->nzmax);
-	int r,c,m,n;
+	int r,c,m,n,k,nz,found;
+	m = A->m; n = A->n;		
 	double test;
-	m = A->m; n = A->n;
-	for (r=0; r<m; r++){
-		for (c=0; c<n; c++){
-			test = acc (A,r,c);
-			printf ("%.0f\t", test);
+	if (A->nz == -1){
+		nz = A->nzmax;
+		printf ("%d-by-%d Compressed Matrix of %d Elements\n",m,n,nz);
+		for (r=0; r<m; r++){
+			for (c=0; c<n; c++){
+				test = acc (A,r,c);
+				printf ("%.0f\t", test);
+			}
+			printf ("\n");
 		}
-		printf ("\n");
+	}
+	else if (A->nz > 0){
+		nz = A->nz;
+		printf ("%d-by-%d Triplet Matrix of %d Elements\n",m,n,nz);
+		for (r=0; r<m; r++){
+			for (c=0; c<n; c++){
+				for (k=0; k<nz; k++){
+					found = 0;
+					if (A->i[k] == r && A->p[k] == c)
+					{ printf ("%.0f\t", A->x[k]); found = 1; break;}
+				}
+				if (!found) { printf ("%d\t", 0); }
+			}
+			printf ("\n");
+		}
 	}
 	printf ("\n");
 }

@@ -1,7 +1,9 @@
 #include "cs.h"
 #include "mysparse.h"
 
-cs* acc_jac (jac_mat s, int m, int n)
+//int jac_storage[] = {0,1,2,3,4,5,6,7};
+
+cs* alloc_jac (jac_name s, int m, int n)
 {
 	cs* T;
 	if (s==Fx) { T = cs_spalloc (m,n,m*n,1,1); }
@@ -15,32 +17,38 @@ cs* acc_jac (jac_mat s, int m, int n)
 	return T;
 }
 
-
-cs* add_jac (jac_mat s, int* r, int* c, double* v, int size)
+/*returns triplet (uncompressed) matrix*/
+cs* add_jac (jac_name s, int* r, int* c, double* v, int size)
 {
-	int k,m,n,max;
-	cs* T;
 
+	int k,max,m,n;
+/*
 	if (s!=Fx && s!=Fy && s!=Gx && s!=Gy && s!=Fx0 && s!=Fy0 && s!=Gx0 && s!=Gy0)
 	{
 		printf ("Wrong Jacobian matrix name\n");
 		return NULL;
 	}
-	
-	max = r[0]; /*find m-by-n of matrix*/
+*/
+	max = r[0];
 	for (k=1;k<size;k++) { if (r[k]>max) { max = r[k]; } }
 	m = max;
 	max = c[0];
 	for (k=1;k<size;k++) { if (c[k]>max) { max = c[k]; } }
 	n = max;
 	m++; n++;
-
-	T = acc_jac (s,m,n);
-	for (k=0; k<size; k++) { cs_entry (T,r[k],c[k],v[k]); }
+	cs* T = alloc_jac (s,m,n);
+	for (k=0;k<size;k++)
+	{
+		if (!(cs_entry (T,r[k],c[k],v[k]))) {
+			printf ("cs_entry failed\n");
+			return NULL;
+		}
+	}
 	return T;
 }
 
-cs* set_jac (jac_mat s, int* r, int* c, double* v, int size)
+/*returns triplet (uncompressed) matrix*/
+cs* set_jac (jac_name s, int* r, int* c, double* v, int size)
 {
-
+	
 }
