@@ -1,5 +1,4 @@
 #include "cs.h"
-#include "jacobian.h"
 
 /*change one element at a time for COMPRESSED matrices*/
 double acc(const cs * A, int r, int c);
@@ -12,9 +11,12 @@ void csc (const cs * A);
 void print (const cs * A);
 
 /*Jacobian, returns TRIPLET matrices*/
-cs * add_jac (jac_name s, int* r, int* c, double* v, int size);
+typedef enum { Fx,Fy,Gx,Gy,Fx0,Fy0,Gx0,Gy0}  jac_name;
+cs* acc_jac (cs** jac_stor, jac_name s);
+void add_jac (cs** jac_stor, jac_name s, int* r, int* c, double* v, int size);
 cs * set_jac (jac_name s, int* r, int* c, double* v, int size);
-cs * alloc_jac (jac_name s, int m, int n);
+cs ** alloc_jac (int m, int n);
+void free_jac (cs** jac_stor);
 
 /*not used*/
 cs * add(cs * A, int r, int c, double v);

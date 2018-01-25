@@ -36,9 +36,9 @@ void print (const cs *A)
 			printf ("\n");
 		}
 	}
-	else if (A->nz > 0){
+	else if (A->nz >= 0){
 		nz = A->nz;
-		printf ("%d-by-%d Triplet Matrix of %d Elements\n",m,n,nz);
+		printf ("%d-by-%d Uncompressed Matrix of %d Elements\n",m,n,nz);
 		for (r=0; r<m; r++){
 			for (c=0; c<n; c++){
 				for (k=0; k<nz; k++){
