@@ -5,8 +5,11 @@
 
 int set(cs *A, int r, int c, double v)
 {
-	if (errbound(A,r,c)) return 2; /*return 2 if out of bounds*/
-	if (acc(A,r,c)) return 1; /*return 1 if existing value*/
+	if (!A) return 4; /*return 4 if invalid*/
+	if (v==0) return 1; /*return 1 if value is zero*/
+	if (errbound(A,r,c)) return 3; /*return 3 if out of bounds*/
+	if (acc(A,r,c)) return 2; /*return 2 if existing value*/
+
 	if (A->nz == -1){
 		int cp1,cp2,k,t; /*index*/
 		int newmax = A->nzmax + 1;
@@ -40,7 +43,7 @@ int set(cs *A, int r, int c, double v)
 		cs_entry(A,r,c,v);
 		return 0;
 	}
-	else return 3; /*return 3 if invalid*/
+	else return 4;
 }
 
 

@@ -43,26 +43,44 @@ cs* acc_jac (cs** jac_stor, jac_name s){
 void add_jac (cs** jac_stor, jac_name s, int* r, int* c, double* v, int size)
 {
 	cs* T;
-	int k,max,m,n;
-	if (s!=Fx && s!=Fy && s!=Gx && s!=Gy && s!=Fx0 && s!=Fy0 && s!=Gx0 && s!=Gy0)
-	{
-		printf ("Wrong Jacobian matrix name\n");
-		return;
-	}
+	int k,err;
 	T = acc_jac (jac_stor,s);
 	for (k=0;k<size;k++)
 	{
-		if (!(cs_entry (T,r[k],c[k],v[k]))) {
-			printf ("cs_entry failed\n");
+		err = set(T,r[k],c[k],v[k]);
+		if (err) {
+			printf ("set failed; err = %d\n", err);
 			return;
 		}
 	}
 }
 
 /*returns triplet (uncompressed) matrix*/
-void set_jac (jac_name s, int* r, int* c, double* v, int size)
+void set_jac (cs** jac_stor, jac_name s, int* r, int* c, double* v, int size)
 {
+	cs* T;
+	int k,err,nz;
+	T = acc_jac (jac_stor,s);
+	nz = T->nz;
 	
+	for (k=0;k<nz;k++){
+		printf ("loop %d\n", k);
+		printf ("On element %.2f\n", acc(T,T->i[0],T->p[0]));
+		array (T);
+		err = del(T,T->i[0],T->p[0]);
+		if (err) {
+			printf ("del failed; err = %d\n", err);
+			return;	
+		}
+	}
+	for (k=0;k<size;k++)
+	{
+		err = set(T,r[k],c[k],v[k]);
+		if (err) {
+			printf ("set failed; err = %d\n", err);
+			return;
+		}
+	}
 }
 
 
