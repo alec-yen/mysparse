@@ -27,7 +27,7 @@ void sandbox()
 	printf ("Enter <rows> <columns> of matrix: ");
 	if (scanf ("%d %d", &m,&n)){
 		if (t) T = cs_spalloc (m,n,m*n,1,1);
-		if (!t) { A = cs_spalloc (m,n,m*n,1,1); T = cs_compress(A); cs_spfree (A); }
+		if (!t) { A = cs_spalloc (m,n,m*n,1,1); T = cs_compress(A); cs_spfree (A); T->nzmax = 0; }
 	}
 	while (1) {
 		cmd = (char*) malloc (sizeof(char) * 10);				

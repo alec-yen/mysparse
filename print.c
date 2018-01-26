@@ -8,7 +8,7 @@ int csc (const cs *A)
 	if (!A) return 1; /*return 1 if invalid*/
 	if (A->nz != -1) return 1;
 
-	int m, n, nzmax, *i, *p, k, l, s, t;
+	int n, nzmax, *i, *p, k;
 	double *x;
 	n = A->n; i = A->i; p = A->p; x = A->x; nzmax = A->nzmax;
 	
