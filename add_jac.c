@@ -1,7 +1,7 @@
 #include "cs.h"
 #include "mysparse.h"
 
-
+/*allocates array of pointers to jacobian matrices*/
 cs** alloc_jac (int m, int n)
 {
 	cs* Fx,*Fy,*Gx,*Gy,*Fx0,*Fy0,*Gx0,*Gy0;
@@ -20,6 +20,7 @@ cs** alloc_jac (int m, int n)
 	return jac_stor;
 }
 
+/*frees array of pointers to jacobian matrices*/
 void free_jac (cs** jac_stor){
 	cs_spfree (jac_stor[0]);
 	cs_spfree (jac_stor[1]);
@@ -32,6 +33,7 @@ void free_jac (cs** jac_stor){
 	free (jac_stor);
 }
 
+/*returns jacobian matrix given jac_name*/
 cs* acc_jac (cs** jac_stor, jac_name s){
 	return jac_stor[s];
 }
@@ -47,8 +49,6 @@ void add_jac (cs** jac_stor, jac_name s, int* r, int* c, double* v, int size)
 		printf ("Wrong Jacobian matrix name\n");
 		return;
 	}
-
-	
 	T = acc_jac (jac_stor,s);
 	for (k=0;k<size;k++)
 	{
@@ -60,7 +60,7 @@ void add_jac (cs** jac_stor, jac_name s, int* r, int* c, double* v, int size)
 }
 
 /*returns triplet (uncompressed) matrix*/
-cs* set_jac (jac_name s, int* r, int* c, double* v, int size)
+void set_jac (jac_name s, int* r, int* c, double* v, int size)
 {
 	
 }

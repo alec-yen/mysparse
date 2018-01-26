@@ -3,30 +3,39 @@
 
 /*modify an existing triplet value, when passed compressed matrix, index, and new value*/
 
-void mod(cs *A, int r, int c, double v)
+int mod(cs *A, int r, int c, double v)
 {
-	int m, n, nz, *i, *p, a, b, k, found;
-	double *x, cv; /*cv is current value*/
+	if (errbound(A,r,c)) return 2; /*return 2 if outside bounds*/
+	if (!(acc(A,r,c))) return 1; /*return 1 if no value at index*/
 	
-	found = 0;
-	m = A->m; n = A->n; i = A->i; p = A->p; x = A->x; nz = A->nz;
-	a = p[c];
-	b = p[c+1];
+	int *i, *p, a, b, k;
+	double *x;
 
-	cv = acc (A,r,c);	
-	if (cv==0 || cv==999) { return; }
-
-	for (k=0;k<b-a;k++) { if (r == i[k+a]) { found = 1; break; } }
-
-	x[p[c]+k] = v;
+	if (A->nz == -1)
+	{
+		i = A->i; p = A->p; x = A->x;
+		a = p[c];
+		b = p[c+1];
+		for (k=0;k<b-a;k++) { if (r == i[k+a]) break; }
+		x[p[c]+k] = v;
+		return 0; /*return 0 if successful*/
+	}
+	else if (A->nz >= 0)
+	{
+		for (k=0; k<A->nz; k++){ if (A->i[k] == r && A->p[k] == c) break; }
+		A->x[k] = v;
+		return 0;
+	}
+	else return 3; /*return 3 if invalid*/
 }
 
 
 /*removes triplet from compressed matrix
 essentially alters a value to 0 and drops zeros*/
 
-void del(cs *A, int r, int c)
+int del(cs *A, int r, int c)
 {
-	mod (A,r,c,0);
-	cs_dropzeros (A);
+	int err = mod (A,r,c,0);
+	if (!err) cs_dropzeros (A);
+	return err;
 }
