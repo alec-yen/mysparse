@@ -1,7 +1,20 @@
 #include "cs.h"
 #include "mysparse.h"
-#include <stdio.h>
-#include <stdlib.h>
+
+/*returns empty compressed or triplet (uncompressed) matrix */
+
+cs* create (int m, int n, int triplet)
+{
+	int k; cs* T;
+	if (!triplet)
+	{
+		T = cs_spalloc (m,n,0,1,0);
+		T->nzmax = 0;
+		for (k=0;k<n+1;k++) T->p[k]=0;
+	}
+	else if (triplet) T = cs_spalloc (m,n,m*n,1,1);
+	return T;
+}
 
 
 /*returns triplet matrix with nzmax = m*n */
@@ -21,7 +34,6 @@ cs* ucreate_full (int *r, int *c, double *v, int size)
     {
         if (!cs_entry(T,r[k],c[k],v[k]))
         {
-            printf ("cs_entry failed\n");
             return NULL;
         }
     }

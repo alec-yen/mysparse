@@ -1,9 +1,9 @@
 #include "cs.h"
 #include "mysparse.h"
 
-/*sets element in compressed matrix - requires 2 allocations*/
+/*adds element to matrix - requires 2 allocations*/
 
-int set(cs *A, int r, int c, double v)
+int add(cs *A, int r, int c, double v)
 {
 	if (!A) return 4; /*return 4 if invalid*/
 	if (v==0) return 1; /*return 1 if value is zero*/
@@ -47,9 +47,9 @@ int set(cs *A, int r, int c, double v)
 }
 
 
-/*less efficient version of set - requires 17 allocations*/
+/*less efficient version of add - requires 17 allocations*/
 
-cs * add(cs *A, int r, int c, double v)
+cs * add2(cs *A, int r, int c, double v)
 {
 	cs *B, *BC, *C;
 	int m, n;

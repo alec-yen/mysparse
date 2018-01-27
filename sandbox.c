@@ -3,45 +3,36 @@
 #include <string.h>
 
 /*test functions*/
-/*
-	To-do List
-	//no checks for mod or add against values of 0
-	//no safeguards against entering letters
-	//create has no error checks
-	//can only work with one matrix at a time
-*/
 
 void sandbox()
 {
-	cs *A; 
 	cs *T;
-	int m,n,r,c,t;
+	int m,n,r,c,triplet;
 	double v,err,test;
 
 	char * cmd;
-	char * c1 = "set"; char * c2 = "mod"; char * c3 = "del";
+	char * c1 = "add"; char * c2 = "mod"; char * c3 = "del";
 	char * c4 = "print"; char * c5 = "help"; char * c6 = "stop"; char *c7 = "array";
 
 	printf ("Choose to create compressed matrix (0) or triplet/uncompressed matrix (1): ");
-	if (scanf ("%d", &t)) { } 
+	if (scanf ("%d", &triplet)) { } 
 	printf ("Enter <rows> <columns> of matrix: ");
 	if (scanf ("%d %d", &m,&n)){
-		if (t) T = cs_spalloc (m,n,m*n,1,1);
-		if (!t) { A = cs_spalloc (m,n,m*n,1,1); T = cs_compress(A); cs_spfree (A); T->nzmax = 0; }
+		T = create (m,n,triplet);
 	}
 	while (1) {
 		cmd = (char*) malloc (sizeof(char) * 10);				
 		printf ("Enter a command (e.g. help): ");
 		if (scanf ("%s", cmd)) { }
-		if (strcmp (cmd,c1)==0) //set
+		if (strcmp (cmd,c1)==0) //add
 		{
 			if (scanf ("%d %d %lf",&r,&c,&v))
 			{
-				err = set(T,r,c,v);
-				if (!err) printf ("Index (%d,%d) set to %.2f\n",r,c,v);
+				err = add(T,r,c,v);
+				if (!err) printf ("Value %.2f added at index (%d,%d)\n",v,r,c);
 				else if (err==3) printf ("Index (%d,%d) outside %d by %d matrix\n",r,c,m,n);
 				else if (err==2) printf ("%.2f already exists at index (%d,%d)\n",acc(T,r,c),r,c);
-				else if (err==1) printf ("Cannot set a value to zero\n");
+				else if (err==1) printf ("Cannot add value of zero\n");
 			}
 		}		
 		else if (strcmp (cmd,c2)==0) //mod
@@ -69,7 +60,7 @@ void sandbox()
 		else if (strcmp (cmd,c4)==0) { if (print (T)) printf ("Must be a valid matrix\n"); }
 		else if (strcmp (cmd,c5)==0) //help
 		{
-			printf ("\nset <i> <j> <v>: sets an element\n");
+			printf ("\nadd <i> <j> <v>: adds an element\n");
 			printf ("mod <i> <j> <v>: changes an element\n");
 			printf ("del <i> <j>: delete an element\n");
 			printf ("print: print the matrix\narray: print matrix arrays\nstop: end program\n\n");
