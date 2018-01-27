@@ -4,7 +4,7 @@ CF = -O -g
 I = -I../repos/SuiteSparse/CXSparse/Include -I../repos/SuiteSparse/SuiteSparse_config
 
 CS = ../repos/SuiteSparse/CXSparse/Lib/libcxsparse.a
-CH = acc.c add.c mod.c del.c  print.c jac.c err.c sandbox.c create.c
+CH = add.c mod.c create.c del.c acc.c print.c jac.c err.c sandbox.c randmat.c
 
 all: $(CS) test1 test2
 

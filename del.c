@@ -32,9 +32,12 @@ int del(cs *A, int r, int c)
 	}
 }
 
+/*removes all values from a matrix*/
+
 int clear(cs *A)
 {
 	int k,nz;
 	nz = A->nz;
 	for (k=0;k<nz;k++) if (del(A,A->i[0],A->p[0])) return 1;
+	return 0;
 }

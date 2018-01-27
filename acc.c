@@ -1,7 +1,7 @@
 #include "cs.h"
 #include "mysparse.h"
 
-/*access a value, if given compressed matrix, row and column index
+/*returns value at give row and column of a matrix
 item (i, j) can be accessed as data[indptr[j]+k], where k is position of i in indices[indptr[j]:indptr[j+1]]*/
 
 double acc(const cs *A, int r, int c)
