@@ -3,9 +3,9 @@
 
 /*test randmat or sandbox*/
 
-int main(int argc, char** argv)
+int main()//int argc, char** argv)
 {
-	if (argc != 5)
+/*	if (argc != 5)
 	{
 		printf ("Required Input: ./test2 <num_rows> <num_cols> <num_vals> <triplet>\n");
 		return 1;
@@ -17,6 +17,6 @@ int main(int argc, char** argv)
 	cs* T = randmat (m,n,nz,triplet);
 	if (!T) printf ("Invalid <num_rows> or <num_cols>\n");
 	cs_spfree (T);
-	//sandbox();
+*/	sandbox();
 	return 0;
 }

@@ -25,20 +25,49 @@ void sandbox()
 			cmd = (char*) malloc (sizeof(char) * 10);				
 			printf ("Enter a command (e.g. help): ");
 			if (scanf ("%s", cmd)) { }
-			if (strcmp (cmd,c1)==0) { if (scanf ("%d %d %lf",&r,&c,&v)) errprint_one (add(T,r,c,v)); }
-			else if (strcmp (cmd,c2)==0) { if (scanf ("%d %d %lf",&r,&c,&v)) errprint_one (mod(T,r,c,v)); }
-			else if (strcmp (cmd,c3)==0) { if (scanf ("%d %d",&r,&c)) errprint_one (del(T,r,c)); }
+			if (strcmp (cmd,c1)==0) //add
+			{
+				if (scanf ("%d %d %lf",&r,&c,&v))
+				{
+					err = add(T,r,c,v);
+					if (!err) printf ("Value %.2f added at index (%d,%d)\n",v,r,c);
+					else if (err==3) printf ("Index (%d,%d) outside %d by %d matrix\n",r,c,m,n);
+					else if (err==2) printf ("%.2f already exists at index (%d,%d)\n",acc(T,r,c),r,c);
+					else if (err==1) printf ("Cannot add value of zero\n");
+				}
+			}		
+			else if (strcmp (cmd,c2)==0) //mod
+			{
+				if (scanf ("%d %d %lf",&r,&c,&v))
+				{
+					test = acc(T,r,c);
+					err = mod(T,r,c,v);
+					if (!err) printf ("Index (%d,%d) changed from %.2f to %.2f\n",r,c,test,v);
+					else if (err==3) printf ("Index (%d,%d) outside %d by %d matrix\n",r,c,m,n);
+					else if (err==2) printf ("No value exists at index (%d,%d)\n",r,c);
+				}
+			}
+			else if (strcmp (cmd,c3)==0) //delete
+			{
+				if (scanf ("%d %d",&r,&c))
+				{
+					test = acc(T,r,c);
+					err = del(T,r,c);
+					if (!err) printf ("Value %.2f at index (%d,%d) deleted\n",test,r,c);
+					else if (err==3) printf ("Index (%d,%d) outside %d by %d matrix\n",r,c,m,n);
+					else if (err==2) printf ("No value exists at index (%d,%d)\n",r,c);
+				}
+			}
 			else if (strcmp (cmd,c4)==0) { if (print (T)) printf ("Must be a valid matrix\n"); }
-			else if (strcmp (cmd,c7)==0) { if (array (T)) printf ("Must be a valid matrix\n"); }
-			else if (strcmp (cmd,c5)==0) /*help*/
+			else if (strcmp (cmd,c5)==0) //help
 			{
 				printf ("\nadd <i> <j> <v>: adds an element\n");
 				printf ("mod <i> <j> <v>: changes an element\n");
 				printf ("del <i> <j>: delete an element\n");
 				printf ("print: print the matrix\narray: print matrix arrays\nstop: end program\n\n");
 			}
-
 			else if (strcmp (cmd,c6)==0) { break; }
+			else if (strcmp (cmd,c7)==0) { if (array (T)) printf ("Must be valid, non-empty matrix\n"); }
 			else {printf ("Invalid command\n");}
 			free (cmd);
 		}
