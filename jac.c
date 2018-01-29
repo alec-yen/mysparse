@@ -23,7 +23,8 @@ cs** alloc_jac (int m, int n)
 }
 
 /*frees array of pointers to jacobian matrices*/
-int free_jac (cs** jac_stor){
+int free_jac (cs** jac_stor)
+{
 	int k;
 	for (k=0;k<NUM_JAC;k++)
 	{
@@ -35,7 +36,8 @@ int free_jac (cs** jac_stor){
 }
 
 /*returns jacobian matrix given jac_name*/
-cs* acc_jac (cs** jac_stor, jac_name s){
+cs* acc_jac (cs** jac_stor, jac_name s)
+{
 	return jac_stor[s];
 }
 

@@ -23,8 +23,10 @@ int print (const cs * A); 			/*prints matrix in readable form*/
 
 /*error check*/
 int errbound (const cs * A, int r, int c);			/*check if r and c are within matrix bounds*/
+int errsize (int m, int n);					/*check if m and n are positive*/
+int errarr (const int * a, int * max, int size);		/*check if indices array is positive and store max+1*/
+cs* randmat (int m, int n, int nz, int triplet);		/*returns random matrix with values 1 to 100*/
 void sandbox ();						/*testing of non-Jacobian functions*/
-void randmat (int vals,int rows,int cols,int triplet);		/*testing of memory efficiency*/
 
 /*Jacobian (TRIPLET only)*/
 typedef enum 	{ Fx,Fy,Gx,Gy,Fx0,Fy0,Gx0,Gy0} jac_name;	/*names of Jacobian matrices*/

@@ -30,6 +30,7 @@ int del(cs *A, int r, int c)
 		A->nz--;
 		return err;
 	}
+	else return 4; /*return 4 if invalid matrix*/
 }
 
 /*removes all values from a matrix*/

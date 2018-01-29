@@ -1,10 +1,11 @@
 #include "cs.h"
 #include "mysparse.h"
 
-/*returns empty compressed or triplet (uncompressed) matrix */
+/*returns empty compressed or triplet matrix */
 
 cs* create (int m, int n, int triplet)
 {
+	if (errsize (m,n)) return NULL;
 	int k; cs* T;
 	if (!triplet)
 	{
