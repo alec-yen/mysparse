@@ -22,7 +22,6 @@ int add(cs *A, int r, int c, double v)
 				break;
 			}
 		}
-
 		for (t=c+1; t<A->n+1; t++){ /*assume no change in Cp size with columns*/
 			A->p[t]++;
 		}

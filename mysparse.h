@@ -9,11 +9,10 @@
 int add (cs * A, int r, int c, double v); 	/*adds an element to matrix*/
 int mod (cs * A, int r, int c, double v); 	/*modifies an element  of matrix*/
 int del (cs * A, int r, int c); 		/*deletes an element of matrix*/
-
+int clear (cs * A);				/*deletes all elements of matrix*/
 
 /*create, clear, access functions*/
 cs * create (int m, int n, int triplet);	/*returns either compressed or triplet matrix*/
-int clear (cs * A);				/*deletes all elements of matrix*/
 double acc (const cs * A, int r, int c);	/*returns value found at index*/
 int array (const cs * A); 			/*prints three arrays of matrix*/
 int print (const cs * A); 			/*prints matrix in readable form*/
@@ -30,7 +29,7 @@ int add_jac  	(cs ** jac_stor, jac_name s, 			/*adds r,c,v arrays to empty Jacob
 		int * r, int * c, double * v, int size);
 int set_jac  	(cs ** jac_stor, jac_name s,			/*sets r,c,v arrays to full Jacobian matrix*/
 		int * r, int * c, double * v, int size);
-cs** alloc_jac 	(int m, int n);					/*allocate Jacobian matrices*/
+cs** alloc_jac 	(int m, int n, int triplet);			/*allocate Jacobian matrices*/
 int free_jac 	(cs ** jac_stor);				/*free Jacobian matrices*/
 
 

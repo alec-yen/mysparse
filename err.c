@@ -39,19 +39,19 @@ int errarr (cs* A, int* r, int* c, int size)
 /*print error for one-at-a-time functions*/
 void errprint_one (int k)
 {
-	if (k==0) printf ("Success\n");
-	else if (k==1) printf ("Invalid value of zero passed\n");
-	else if (k==2) printf ("Either existing value (add) or no value (modify/delete)\n");
-	else if (k==3) printf ("Invalid row or column indices\n");
-	else if (k==4) printf ("Invalid matrix\n");
+	if (k==0) printf ("Success\n"); /*can comment out*/
+	else if (k==1) printf ("Error %d: invalid value of zero passed\n",k);
+	else if (k==2) printf ("Error %d: either existing value (add) or no value (modify/delete)\n",k);
+	else if (k==3) printf ("Error %d: invalid row or column indices\n",k);
+	else if (k==4) printf ("Error %d: invalid matrix\n",k);
 	else printf ("Invalid error\n");
 }
 
 void errprint_jac (int k)
 {
-	if (k==0) printf ("Success\n");
-	else if (k==1) printf ("No jacobian matrices to free\n");
-	else if (k==2) printf ("Functions add or clear failed\n");
-	else if (k==3) printf ("Invalid row or column indices\n");
+	if (k==0) printf ("Success\n"); /*can comment out*/
+	else if (k==1) printf ("Error %d: no jacobian matrices to free\n",k);
+	else if (k==2) printf ("Error %d: functions add or clear failed\n",k);
+	else if (k==3) printf ("Error %d: invalid row or column indices\n",k);
 	else printf ("Invalid error\n");
 }

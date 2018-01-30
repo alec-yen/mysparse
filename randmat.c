@@ -3,7 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-/*generates either compressed or triplet random matrix*/
+/*generates either compressed or triplet random matrix with values between 1 and 100*/
 
 int MAX_VALUE = 100;
 
@@ -19,7 +19,6 @@ cs* randmat (int m,int n,int nz,int triplet)
 		double v = rand()%MAX_VALUE + 1;
 		add (T,r,c,v);
 	}
-//	if (m < 30 && n < 30) print (T);
 	return T;
 }
 	

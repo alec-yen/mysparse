@@ -23,7 +23,7 @@ int main()
 	double v3[] = {15,14,13,12,11,10,9,8,7,6,5,4,3,2,1};
 
 
-	jac_stor = alloc_jac (m,n);
+	jac_stor = alloc_jac (m,n,1);
 	mGy = acc_jac (jac_stor,Gy);
 	errprint_jac (add_jac (jac_stor,Gy,r1,c1,v1,size));
 	print (mGy);
@@ -31,7 +31,6 @@ int main()
 	print (mGy);
 	errprint_jac (set_jac (jac_stor,Gy,r3,c3,v3,size));
 	print (mGy);
-
 	free_jac (jac_stor);
 	return 0;
 }

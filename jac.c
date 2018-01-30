@@ -4,18 +4,18 @@
 int NUM_JAC = 8;
 
 /*allocates array of pointers to jacobian matrices*/
-cs** alloc_jac (int m, int n)
+cs** alloc_jac (int m, int n, int triplet)
 {
 	cs* Fx,*Fy,*Gx,*Gy,*Fx0,*Fy0,*Gx0,*Gy0;
 	cs** jac_stor = malloc (NUM_JAC*sizeof(cs*));
-	Fx = cs_spalloc (m,n,m*n,1,1);
-	Fy = cs_spalloc (m,n,m*n,1,1);
-	Gx = cs_spalloc (m,n,m*n,1,1);
-	Gy = cs_spalloc (m,n,m*n,1,1);
-	Fx0 = cs_spalloc (m,n,m*n,1,1);
-	Fy0 = cs_spalloc (m,n,m*n,1,1);
-	Gx0 = cs_spalloc (m,n,m*n,1,1);
-	Gy0 = cs_spalloc (m,n,m*n,1,1);
+	Fx = create (m,n,triplet);
+	Fy = create (m,n,triplet);
+	Gx = create (m,n,triplet);
+	Gy = create (m,n,triplet);
+	Fx0 = create (m,n,triplet);
+	Fy0 = create (m,n,triplet);
+	Gx0 = create (m,n,triplet);
+	Gy0 = create (m,n,triplet);
 
 	jac_stor[0]=Fx; jac_stor[1]=Fy; jac_stor[2]=Gx; jac_stor[3]=Gy;
 	jac_stor[4]=Fx0; jac_stor[5]=Fy0; jac_stor[6]=Gx0; jac_stor[7]=Gy0;
