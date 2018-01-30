@@ -40,8 +40,8 @@ int errarr (cs* A, int* r, int* c, int size)
 void errprint_one (int k)
 {
 	if (k==0) printf ("Success\n"); /*can comment out*/
-	else if (k==1) printf ("Error %d: invalid value of zero passed\n",k);
-	else if (k==2) printf ("Error %d: either existing value (add) or no value (modify/delete)\n",k);
+	else if (k==1) printf ("Error %d: invalid value of zero passed (add, modify)\n",k);
+	else if (k==2) printf ("Error %d: either existing value (add) or no value (modify, delete)\n",k);
 	else if (k==3) printf ("Error %d: invalid row or column indices\n",k);
 	else if (k==4) printf ("Error %d: invalid matrix\n",k);
 	else printf ("Invalid error\n");
@@ -50,8 +50,8 @@ void errprint_one (int k)
 void errprint_jac (int k)
 {
 	if (k==0) printf ("Success\n"); /*can comment out*/
-	else if (k==1) printf ("Error %d: no jacobian matrices to free\n",k);
-	else if (k==2) printf ("Error %d: functions add or clear failed\n",k);
-	else if (k==3) printf ("Error %d: invalid row or column indices\n",k);
+	else if (k==1) printf ("Error %d: either clear function failed (set) or jac matrices don't exist (free)\n",k);
+	else if (k==2) printf ("Error %d: add function failed (set, add)\n",k);
+	else if (k==3) printf ("Error %d: invalid row or column indice array (set, add)\n",k);
 	else printf ("Invalid error\n");
 }

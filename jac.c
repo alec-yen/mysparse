@@ -56,7 +56,7 @@ int set_jac (cs** jac_stor, jac_name s, int* r, int* c, double* v, int size)
 {
 	int k; cs* T = acc_jac (jac_stor,s);
 	if (errarr (T,r,c,size)) return 3; /*return 3 if outside bounds of matrix*/
-	if (clear(T)) return 2; /*return 2 if clear fails*/
+	if (clear(T)) return 1; /*return 2 if clear fails*/
 	for (k=0;k<size;k++) if (add (T,r[k],c[k],v[k])) return 2; /*return 2 if add fails*/
 	return 0;
 }

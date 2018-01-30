@@ -18,7 +18,7 @@ int del(cs *A, int r, int c)
 		for (k=0;k<b-a;k++) { if (r == i[k+a]) break; }
 		x[p[c]+k] = 0;
 		cs_dropzeros (A); /*works only on compressed*/
-		return 0;
+		return 0; /*return 0 if success*/
 	}
 	else if (nz >= 0)
 	{
@@ -39,27 +39,18 @@ int del(cs *A, int r, int c)
 
 int clear(cs *A)
 {
-	int k,nz,nzmax,*i,*p;
-	nz = A->nz; nzmax = A->nzmax; i = A->i; p = A->p;
+	if (!A) return 4; /*return 1 if invalid*/
+	int k,nz,nzmax,*i,*p,ok,n;
+	double *x;
+	ok = 1; nz = A->nz; n = A->n; i = A->i; p = A->p; x = A->x;
 	if (nz == -1)
 	{
-		int r,c;
-		for (r=0;r<A->m;r++)
-		{
-			for (c=0;c<A->n;c++)
-			{
-				del (A,r,c);
-			}
-		}
-		return 0;
+		A->i = cs_realloc (i,0,sizeof(CS_INT),&ok);
+		A->x = cs_realloc (x,0,sizeof(CS_ENTRY),&ok);		
+		A->nzmax = 0;
+		for (k=0;k<n+1;k++) p[k]=0;
+		return 0; /*return 0 if success*/
 	}
-	else if (nz >= 0)
-	{
-		for (k=0;k<nz;k++)
-		{
-			if (del(A,i[0],p[0])) return 1;
-		}
-		return 0;
-	}
-	else return 4; /*return 4 if invalid matrix*/
+	else if (nz >= 0) { A->nz = 0; return 0; }
+	else return 4;
 }
