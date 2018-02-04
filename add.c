@@ -1,66 +1,107 @@
 #include "cs.h"
 #include "mysparse.h"
 
-/*adds element to matrix - requires 2 allocations*/
 
-int add(cs *A, int r, int c, double v)
+/*adds matrix B to matrix A - requires allocations if new indices are added*/
+
+cs* add(cs* A, cs* B)
 {
-	if (!A) return 4; /*return 4 if invalid*/
-	if (v==0) return 1; /*return 1 if value is zero*/
-	if (errbound(A,r,c)) return 3; /*return 3 if out of bounds*/
-	if (acc(A,r,c)) return 2; /*return 2 if existing value*/
-
-	if (A->nz == -1){
-		int cp1,cp2,k,t; /*index*/
-		int newmax = A->nzmax + 1;
-		int ok = 1;
-
-		cp1 = A->p[c]; /*index of Ci and Cx array to start iteration*/
-		cp2 = A->p[c+1];
-		for (k = cp1; k < cp2; k++){
-			if (A->i[k] > r){
-				break;
-			}
-		}
-		for (t=c+1; t<A->n+1; t++){ /*assume no change in Cp size with columns*/
-			A->p[t]++;
-		}
-		A->i = cs_realloc (A->i,newmax,sizeof(CS_INT),&ok);
-		A->x = cs_realloc (A->x,newmax,sizeof(CS_ENTRY),&ok);
-		for (t=A->nzmax; t>k; t--){ /*shift values after index k to right*/
-			A->i[t] = A->i[t-1];
-			A->x[t] = A->x[t-1];
-		}
-		A->i[k] = r;
-		A->x[k] = v;
-		A->nzmax++;
-		A->m = CS_MAX (A->m, r+1) ;
-		A->n = CS_MAX (A->n, c+1) ;
-		return 0; /*return 0 if success*/
-	}
-	else if (A->nz >= 0){
-		cs_entry(A,r,c,v);
-		return 0;
-	}
-	else return 4;
+	cs* C;
+	if (!errshape (A,B)) { mod (A,B); return A; }
+	else { C = cs_add (A,B,1,1); return C; }
 }
 
 
-/*less efficient version of add - requires 17 allocations*/
+/*check if B fits within shape of A*/
 
-cs * add2(cs *A, int r, int c, double v)
+int errshape (cs* A, cs* B)
 {
-	cs *B, *BC, *C;
-	int m, n;
-	m = A->m; n = A->n;
+	int j,p,s,Bn,found;
+	int *Ai, *Ap, *Bi, *Bp;
+	double *Ax, *Bx;
+	Ai = A->i; Ap = A->p; Ax = A->x; Bn = B->n;
+	Bi = B->i; Bp = B->p; Bx = B->x;
+	for (j=0;j<Bn;j++) /*loop through each column*/
+	{
+		for (p=Bp[j]; p<Bp[j+1]; p++) /*loop through B's row indices*/
+		{
+			found = 0;
+			for (s=Ap[j]; s<Ap[j+1]; s++) /*compare with A's row indices*/
+			{
+				if (Bi[p] == Ai[s])
+				{
+					found = 1;
+					break;
+				}
+			}
+			if (!found ) return 1; /*return 1 if B does not fit in A*/
+		}
+	}
+	return 0; /*return 0 if B fits in A*/
+}
 
-	B = cs_spalloc (m,n,m*n,1,1);
-	cs_entry(B,r,c,v);
-	BC = cs_compress (B);
-	cs_spfree (B);
+/*given that csc B has same shape as csc A, add B elements to A*/
+/*Example:
+	1 0 2		7 0 10			8 0 12
+  A = 	4 0 3	,  B = 	0 0 0  ,   => 	  A =	4 0 3
+	0 5 6		0 9 12			0 14 18
+*/
 
-	C = cs_add (A, BC, 1, 1);
-	cs_spfree(A);	
-	cs_spfree(BC);
-	return C;
+
+int mod (cs *A, cs *B)
+{
+	int j,p,s,Bn;
+	int *Ai, *Ap, *Bi, *Bp;
+	double *Ax, *Bx;
+	Ai = A->i; Ap = A->p; Ax = A->x; Bn = B->n;
+	Bi = B->i; Bp = B->p; Bx = B->x;
+	int count = 0;
+	for (j=0;j<Bn;j++) /*loop through each column*/
+	{
+		for (p=Bp[j]; p<Bp[j+1]; p++) /*loop through B's row indices*/
+		{
+			for (s=Ap[j]; s<Ap[j+1]; s++) /*compare with A's row indices*/
+			{
+				count++;
+				if (Bi[p] == Ai[s])
+				{
+					Ax[s] += Bx[p]; /*add value if equal row index*/
+					break;
+				}
+			}
+		}
+	}
+	printf ("checked %d spots\n",count);
+	return 0; /*return 0 if successful*/
+}
+
+/*less efficient version of mod*/
+
+int mod2 (cs *A, cs *B)
+{
+	int j,p,s,Bn,Bpmax;
+	int *Ai, *Ap, *Bi, *Bp;
+	double *Ax, *Bx;
+	Ai = A->i; Ap = A->p; Ax = A->x; Bn = B->n;
+	Bi = B->i; Bp = B->p; Bx = B->x;
+	int count = 0;
+	for (j=0;j<Bn;j++) /*loop through each column*/
+	{
+		Bpmax = Bp[j+1];
+		for (p=Ap[j]; p<Ap[j+1]; p++) /*loop through A's row indices*/
+		{
+			if (Ai[p] > Bi[Bpmax-1]) break; /*break if A row index is already higher than B's highest*/
+			for (s=Bp[j]; s<Bpmax; s++) /*compare with B's row indices*/
+			{
+				count++;
+				if (Ai[p] == Bi[s])
+				{
+					Ax[p] += Bx[s]; /*add value if equal row index*/
+					break;
+				}
+			}
+		}
+	}
+	printf ("checked %d spots\n",count);
+	return 0; /*return 0 if successful*/
 }
