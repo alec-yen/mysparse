@@ -3,26 +3,46 @@
 
 /*returns empty compressed or triplet matrix */
 
-cs* create (int m, int n, int triplet)
+cs* ecreate (int m, int n, int triplet)
 {
-	if (errsize (m,n)) return NULL;
-	int k; cs* T;
+	int k; cs* A;
 	if (!triplet)
 	{
-		T = cs_spalloc (m,n,0,1,0);
-		T->nzmax = 0;
-		for (k=0;k<n+1;k++) T->p[k]=0;
+		A = cs_spalloc (m,n,0,1,0);
+		A->nzmax = 0;
+		for (k=0;k<n+1;k++) A->p[k]=0;
 	}
-	else if (triplet) T = cs_spalloc (m,n,m*n,1,1);
-	return T;
+	else if (triplet) A = cs_spalloc (m,n,m*n,1,1);
+	return A;
 }
+
+
+/*returns filled compressed matrix*/
+
+cs* fcreate (int* i, int* j, double* x, int size)
+{
+	int k,m,n,max = i[0];
+	for (k=1;k<size;k++) { if (i[k]>max) { max = i[k]; } }
+	m = max;
+	max = j[0];
+	for (k=1;k<size;k++) { if (j[k]>max) { max = j[k]; } }
+	n = max;
+	m++; n++;
+	cs* A = ecreate (m,n,1);
+	for (k=0;k<size;k++) { cs_entry(A,i[k],j[k],x[k]); }
+	cs* C = cs_compress (A);
+	cs_spfree (A);
+	return C;
+}
+
+
 
 /*removes all values from a matrix*/
 
 int clear(cs *A)
 {
-	if (!A) return 4; /*return 1 if invalid*/
-	int k,nz,nzmax,*i,*p,ok,n;
+	if (!A) return 1; /*return 1 if invalid*/
+	int k,nz,*i,*p,ok,n;
 	double *x;
 	ok = 1; nz = A->nz; n = A->n; i = A->i; p = A->p; x = A->x;
 	if (nz == -1)
@@ -34,29 +54,5 @@ int clear(cs *A)
 		return 0; /*return 0 if success*/
 	}
 	else if (nz >= 0) { A->nz = 0; return 0; }
-	else return 4;
-}
-
-
-/*returns triplet matrix with nzmax = m*n */
-
-cs* ucreate_full (int *r, int *c, double *v, int size)
-{
-    int k,m,n,max; cs* T;
-    max = r[0];
-    for (k=1;k<size;k++) { if (r[k]>max) { max = r[k]; } }
-    m = max;
-    max = c[0];
-    for (k=1;k<size;k++) { if (c[k]>max) { max = c[k]; } }
-    n = max;
-    m++; n++;
-    T = cs_spalloc (m,n,m*n,1,1); //check this line m*n vs size
-    for (k=0;k<size;k++)
-    {
-        if (!cs_entry(T,r[k],c[k],v[k]))
-        {
-            return NULL;
-        }
-    }
-    return T;
+	else return 1;
 }

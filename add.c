@@ -2,25 +2,32 @@
 #include "mysparse.h"
 
 
-/*adds matrix B to matrix A - requires allocations if new indices are added*/
+/*adds csc matrix B to csc matrix A - requires allocations if new indices are added AKA different shapes*/
+/*diff should be 0 when passed*/
 
-cs* add(cs* A, cs* B)
+cs* add(cs* A, cs* B, int *diff)
 {
 	cs* C;
-	if (!errshape (A,B)) { mod (A,B); return A; }
+	if (!diffshape (A,B)) { mod (A,B); return A; }
+	else { C = cs_add (A,B,1,1); *diff = 1; return C; } /*FIX ME: won't work normally unless jac*/
+}
+
+/*doesn't have diff parameter*/
+cs* add2(cs* A, cs* B)
+{
+	cs* C;
+	if (!diffshape (A,B)) { mod (A,B); return A; }
 	else { C = cs_add (A,B,1,1); return C; }
 }
 
 
 /*check if B fits within shape of A*/
-
-int errshape (cs* A, cs* B)
+int diffshape (cs* A, cs* B)
 {
 	int j,p,s,Bn,found;
 	int *Ai, *Ap, *Bi, *Bp;
-	double *Ax, *Bx;
-	Ai = A->i; Ap = A->p; Ax = A->x; Bn = B->n;
-	Bi = B->i; Bp = B->p; Bx = B->x;
+	Ai = A->i; Ap = A->p; Bn = B->n;
+	Bi = B->i; Bp = B->p;
 	for (j=0;j<Bn;j++) /*loop through each column*/
 	{
 		for (p=Bp[j]; p<Bp[j+1]; p++) /*loop through B's row indices*/
@@ -40,14 +47,14 @@ int errshape (cs* A, cs* B)
 	return 0; /*return 0 if B fits in A*/
 }
 
-/*given that csc B has same shape as csc A, add B elements to A*/
+
+
+/*given that csc B fits in csc A, add B elements to A*/
 /*Example:
 	1 0 2		7 0 10			8 0 12
   A = 	4 0 3	,  B = 	0 0 0  ,   => 	  A =	4 0 3
 	0 5 6		0 9 12			0 14 18
 */
-
-
 int mod (cs *A, cs *B)
 {
 	int j,p,s,Bn;
@@ -55,14 +62,12 @@ int mod (cs *A, cs *B)
 	double *Ax, *Bx;
 	Ai = A->i; Ap = A->p; Ax = A->x; Bn = B->n;
 	Bi = B->i; Bp = B->p; Bx = B->x;
-	int count = 0;
 	for (j=0;j<Bn;j++) /*loop through each column*/
 	{
 		for (p=Bp[j]; p<Bp[j+1]; p++) /*loop through B's row indices*/
 		{
 			for (s=Ap[j]; s<Ap[j+1]; s++) /*compare with A's row indices*/
 			{
-				count++;
 				if (Bi[p] == Ai[s])
 				{
 					Ax[s] += Bx[p]; /*add value if equal row index*/
@@ -71,12 +76,11 @@ int mod (cs *A, cs *B)
 			}
 		}
 	}
-	printf ("checked %d spots\n",count);
 	return 0; /*return 0 if successful*/
 }
 
-/*less efficient version of mod*/
 
+/*less efficient version of mod*/
 int mod2 (cs *A, cs *B)
 {
 	int j,p,s,Bn,Bpmax;
@@ -84,7 +88,6 @@ int mod2 (cs *A, cs *B)
 	double *Ax, *Bx;
 	Ai = A->i; Ap = A->p; Ax = A->x; Bn = B->n;
 	Bi = B->i; Bp = B->p; Bx = B->x;
-	int count = 0;
 	for (j=0;j<Bn;j++) /*loop through each column*/
 	{
 		Bpmax = Bp[j+1];
@@ -93,7 +96,6 @@ int mod2 (cs *A, cs *B)
 			if (Ai[p] > Bi[Bpmax-1]) break; /*break if A row index is already higher than B's highest*/
 			for (s=Bp[j]; s<Bpmax; s++) /*compare with B's row indices*/
 			{
-				count++;
 				if (Ai[p] == Bi[s])
 				{
 					Ax[p] += Bx[s]; /*add value if equal row index*/
@@ -102,6 +104,5 @@ int mod2 (cs *A, cs *B)
 			}
 		}
 	}
-	printf ("checked %d spots\n",count);
 	return 0; /*return 0 if successful*/
 }
