@@ -1,4 +1,5 @@
 main
+main.o
 add.o
 create.o
 jac.o
