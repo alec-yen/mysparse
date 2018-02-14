@@ -64,7 +64,6 @@ int mod (cs *A, cs *B)
 	for (j=0;j<A->n;j++)
 	{
 //		printf ("j = %d\n",j);
-		for (p=0;p<m;p++) x[p] = 0;
 		mark = j+1;
 		for (p=Ap[j]; p<Ap[j+1]; p++)
 		{

@@ -40,23 +40,28 @@ int main()
 */
 
 /*COMPARISON OF ADDING METHODS*/
-//	Method 1: mod2 or add2 w/ randmat
-	cs* A = randmat (10000,10000,0.001);
-/*	A = add2 (A,A);
-	print (A);
-*/	cs_spfree (A);
-
+//	Method 1: mod (new) w/ randmat
+/*	cs* A = randmat (10001,10001,0.01);
+	if (!(diffshape(A,A)))
+	{
+		mod(A,A); printf ("success\n");
+	}
+	cs_spfree (A);
+*/
 //	Method 2: cs_add w/ randmat
-/*	cs* A = randmat (10,10,0.1);
+/*	cs* A = randmat (10001,10001,0.01);
 	cs* B = cs_add (A,A,1,1);
 	cs_spfree (B);
 	cs_spfree (A);
 */
-//	Method 3: mod w/ randmat
-/*	cs* A = randmat (10000,10000,0.001);
-	if (!(diffshape2 (A,A))) mod2 (A,A);
+//	Method 3: mod2 (old) w/ randmat
+	cs* A = randmat (10001,10001,0.01);
+	if (!(diffshape2(A,A)))
+	{
+		mod2(A,A); printf ("success\n");
+	}
 	cs_spfree (A);
-*/	
+	
 
 	return 0;
 }
