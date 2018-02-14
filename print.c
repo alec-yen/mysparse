@@ -1,4 +1,3 @@
-#include "cs.h"
 #include "mysparse.h"
 
 /*returns value at give row and column of a matrix

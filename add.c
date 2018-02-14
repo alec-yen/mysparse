@@ -1,4 +1,3 @@
-#include "cs.h"
 #include "mysparse.h"
 
 
@@ -21,8 +20,90 @@ cs* add2(cs* A, cs* B)
 }
 
 
-/*check if B fits within shape of A*/
-int diffshape (cs* A, cs* B)
+/*check if B fits inside A*/
+int diffshape (cs *A, cs *B)
+{
+	int j,p,i,mark;
+	int m = A->m;
+	CS_INT *Ap, *Ai, *Bi, *Bp ;
+	Ap = A->p ; Ai = A->i ; Bi = B->i; Bp = B->p;
+	int* w = cs_calloc (m,sizeof(int));
+
+	for (j=0;j<A->n;j++)
+	{
+		mark = j+1;
+		for (p=Ap[j]; p<Ap[j+1]; p++)
+		{
+			i = Ai [p] ;                            
+			if (w [i] < mark)
+			{
+				w [i] = mark ;
+			}
+		}
+		for (p=Bp[j]; p<Bp[j+1]; p++)
+		{
+			i = Bi [p] ;                            
+			if (w [i] < mark) //if true, different shape
+			{
+				printf ("DIFFERENT SHAPE\n");
+				free (w);
+				return 1;
+			}
+		}
+	}
+	free (w);
+	return 0;
+}
+
+/*given that csc B fits in csc A, add B elements to A*/
+/*Example:
+  1 0 2		7 0 10			8 0 12
+  A = 	4 0 3	,  B = 	0 0 0  ,   => 	  A =	4 0 3
+  0 5 6		0 9 12			0 14 18
+ */
+int mod (cs *A, cs *B)
+{
+	int j,p,i,mark;
+	int m = A->m, nz=0;
+	CS_INT *Ap, *Ai, *Bi, *Bp ;
+	CS_ENTRY *Ax , *Bx;
+	Ap = A->p ; Ai = A->i ; Ax = A->x ; Bi = B->i; Bp = B->p; Bx = B->x;
+	int* w = cs_calloc (m,sizeof(int));
+	double* x = cs_malloc (m,sizeof(double));
+
+	for (j=0;j<A->n;j++)
+	{
+		mark = j+1;
+		for (p=Ap[j]; p<Ap[j+1]; p++)
+		{
+			i = Ai [p] ;                            
+			if (w [i] < mark)
+			{
+				w [i] = mark ;
+				nz++;
+				x[i] = 0;      
+			}
+		}
+		for (p=Bp[j]; p<Bp[j+1]; p++)
+		{
+			i = Bi [p] ;                            
+			if (w [i] < mark) //should never be true
+			{
+				printf ("ERROR\n");
+				return 1;
+			}
+			else x [i] += Bx [p] ;
+		}
+		for (p = Ap [j] ; p < nz ; p++) Ax [p] += x [Ai [p]] ;
+	}
+	free (w); free (x);
+	return 0;
+}
+
+
+/***********************************OLD VERSIONS*******************************/
+/*checks if B fits inside A*/
+int diffshape2 (cs* A, cs* B)
 {
 	int j,p,s,Bn,found;
 	int *Ai, *Ap, *Bi, *Bp;
@@ -48,14 +129,8 @@ int diffshape (cs* A, cs* B)
 }
 
 
-
-/*given that csc B fits in csc A, add B elements to A*/
-/*Example:
-	1 0 2		7 0 10			8 0 12
-  A = 	4 0 3	,  B = 	0 0 0  ,   => 	  A =	4 0 3
-	0 5 6		0 9 12			0 14 18
-*/
-int mod (cs *A, cs *B)
+/*less efficient version of mod*/
+int mod2 (cs *A, cs *B)
 {
 	int j,p,s,Bn;
 	int *Ai, *Ap, *Bi, *Bp;
@@ -71,34 +146,6 @@ int mod (cs *A, cs *B)
 				if (Bi[p] == Ai[s])
 				{
 					Ax[s] += Bx[p]; /*add value if equal row index*/
-					break;
-				}
-			}
-		}
-	}
-	return 0; /*return 0 if successful*/
-}
-
-
-/*less efficient version of mod*/
-int mod2 (cs *A, cs *B)
-{
-	int j,p,s,Bn,Bpmax;
-	int *Ai, *Ap, *Bi, *Bp;
-	double *Ax, *Bx;
-	Ai = A->i; Ap = A->p; Ax = A->x; Bn = B->n;
-	Bi = B->i; Bp = B->p; Bx = B->x;
-	for (j=0;j<Bn;j++) /*loop through each column*/
-	{
-		Bpmax = Bp[j+1];
-		for (p=Ap[j]; p<Ap[j+1]; p++) /*loop through A's row indices*/
-		{
-			if (Ai[p] > Bi[Bpmax-1]) break; /*break if A row index is already higher than B's highest*/
-			for (s=Bp[j]; s<Bpmax; s++) /*compare with B's row indices*/
-			{
-				if (Ai[p] == Bi[s])
-				{
-					Ax[p] += Bx[s]; /*add value if equal row index*/
 					break;
 				}
 			}

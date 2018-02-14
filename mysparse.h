@@ -1,22 +1,27 @@
 #include "cs.h"
 
-/*add functions*/
-cs* add  (cs * A, cs * B, int * diff);		/*adds matrices together and sets diff to 1 if different shapes*/
+/*add.c functions*/
+cs* add  (cs * A, cs * B, int * diff);		/*adds matrices together and sets diff to 1 if different shapes (for jac.c functions)*/
 cs* add2 (cs * A, cs * B);			/*same as add - no diff parameter*/
 int mod  (cs * A, cs * B);			/*adds matrices with same shape together*/
-int mod2 (cs * A, cs * B);			/*same as mod - less efficient*/
+int mod2  (cs * A, cs * B);			/*less efficient version of mod*/
 int diffshape (cs * A, cs * B);			/*check if matrices have different shape*/
+int diffshape2 (cs * A, cs * B);		/*less efficient version of diffshape*/
 
-/*create, clear, access functions*/
-cs * ecreate (int m, int n, int triplet);	/*returns empty matrix (compressed or uncompressed)*/
-cs * fcreate (int* i, int* j, double* x, int size); /*returns filled compressed matrix*/
-int clear (cs * A);				/*deletes all elements of matrix*/
+/*create.c functions*/
+cs * ecreate (int m, int n, int triplet);			/*returns empty matrix (compressed or uncompressed)*/
+cs * fcreate (int m, int n, int* i, int* j, double* x, int size); /*returns filled compressed matrix*/
+int clear (cs * A);						/*deletes all elements of matrix*/
+
+/*print.c functions*/
 double acc (const cs * A, int r, int c);	/*returns value found at index*/
 int array (const cs * A); 			/*prints three arrays of matrix*/
 int print (const cs * A); 			/*prints matrix in readable form*/
 
+/*randmat.c functions*/
+cs* randmat (int m, int n, double sparsity);
 
-/*Jacobian functions (only work with compressed)*/
+/*jac.c functions (only work with compressed)*/
 /*0 = success
   1 = clear function fail (set) or no matrices to free (free)
   2 = add function fail (set, add)

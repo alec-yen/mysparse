@@ -1,4 +1,3 @@
-#include "cs.h"
 #include "mysparse.h"
 
 int NUM_JAC = 8;
@@ -6,7 +5,7 @@ int NUM_JAC = 8;
 /*allocates array of pointers to jacobian matrices*/
 cs** alloc_jac (int m, int n)
 {
-	int triplet = 0; /*allocate csc matrices*/
+	int triplet = 0; /*allocate compressed matrices*/
 	cs* Fx,*Fy,*Gx,*Gy,*Fx0,*Fy0,*Gx0,*Gy0;
 	cs** jac_stor = malloc (NUM_JAC*sizeof(cs*));
 	Fx = ecreate (m,n,triplet);
@@ -54,13 +53,13 @@ cs* acc_jac (cs** jac_stor, jac_name s)
 
 
 /*adds values to jacobian matrix*/
-int add_jac (cs** jac_stor, jac_name s, int* r, int* c, double* v, int size)
+int add_jac (cs** jac_stor, jac_name s, int* i, int* j, double* x, int size)
 {
 	int diff = 0; /*assume not different shape at first*/
 	cs* T;
 	cs* A = acc_jac (jac_stor,s);
-	if (A->nzmax == 0) {T = fcreate (r,c,v,size); reassign_jac (jac_stor,s,T); return 0; }
-	cs* B = fcreate (r,c,v,size);
+	if (A->nzmax == 0) {T = fcreate (A->m,A->n,i,j,x,size); reassign_jac (jac_stor,s,T); return 0; }
+	cs* B = fcreate (A->m,A->n,i,j,x,size);
 	T = add(A,B,&diff);
 	if (diff) reassign_jac (jac_stor,s,T); /*if different shape discovered, realloc*/
 	cs_spfree (B);
@@ -68,9 +67,10 @@ int add_jac (cs** jac_stor, jac_name s, int* r, int* c, double* v, int size)
 }
 
 /*sets values of jacobian matrix*/
-int set_jac (cs** jac_stor, jac_name s, int* r, int* c, double* v, int size)
+int set_jac (cs** jac_stor, jac_name s, int* i, int* j, double* x, int size)
 {
-	cs* T = fcreate (r,c,v,size);
+	cs* A = acc_jac (jac_stor,s);
+	cs* T = fcreate (A->m,A->n,i,j,x,size);
 	reassign_jac (jac_stor,s,T); /*we know it will definitely be different shape*/
 	return 0;
 }

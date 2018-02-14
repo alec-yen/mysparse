@@ -1,4 +1,3 @@
-#include "cs.h"
 #include "mysparse.h"
 
 /*returns empty compressed or triplet matrix */
@@ -19,15 +18,9 @@ cs* ecreate (int m, int n, int triplet)
 
 /*returns filled compressed matrix*/
 
-cs* fcreate (int* i, int* j, double* x, int size)
+cs* fcreate (int m, int n, int* i, int* j, double* x, int size)
 {
-	int k,m,n,max = i[0];
-	for (k=1;k<size;k++) { if (i[k]>max) { max = i[k]; } }
-	m = max;
-	max = j[0];
-	for (k=1;k<size;k++) { if (j[k]>max) { max = j[k]; } }
-	n = max;
-	m++; n++;
+	int k;
 	cs* A = ecreate (m,n,1);
 	for (k=0;k<size;k++) { cs_entry(A,i[k],j[k],x[k]); }
 	cs* C = cs_compress (A);
