@@ -1,16 +1,13 @@
 #include "cs.h"
 
 /*add.c functions*/
-cs* add  (cs * A, cs * B, int * diff);		/*adds matrices together and sets diff to 1 if different shapes (for jac.c functions)*/
-cs* add2 (cs * A, cs * B);			/*same as add - no diff parameter*/
-int mod  (cs * A, cs * B);			/*adds matrices with same shape together*/
-int mod2  (cs * A, cs * B);			/*less efficient version of mod*/
-int diffshape (cs * A, cs * B);			/*check if matrices have different shape*/
-int diffshape2 (cs * A, cs * B);		/*less efficient version of diffshape*/
+cs* add  (cs * A, cs * B, int * diff);		/*adds matrices, sets diff=1 if diffshape (for jac.c)*/
+int mod  (cs * A, cs * B);			/*adds matrices iff same shape together*/
+int diffshape (cs * A, cs * B);			/*returns 1 if matrices have diff shape*/
 
 /*create.c functions*/
-cs * ecreate (int m, int n, int triplet);			/*returns empty matrix (compressed or uncompressed)*/
-cs * fcreate (int m, int n, int* i, int* j, double* x, int size); /*returns filled compressed matrix*/
+cs * ecreate (int m, int n, int triplet);			/*returns empty matrix (csc or trip)*/
+cs * fcreate (int m, int n, int* i, int* j, double* x, int size); /*returns filled csc matrix*/
 int clear (cs * A);						/*deletes all elements of matrix*/
 
 /*print.c functions*/
@@ -32,10 +29,14 @@ int add_jac  	(cs ** jac_stor, jac_name s, 			/*adds r,c,v arrays to empty Jacob
 		int * r, int * c, double * v, int size);
 int set_jac  	(cs ** jac_stor, jac_name s,			/*sets r,c,v arrays to full Jacobian matrix*/
 		int * r, int * c, double * v, int size);
-cs** alloc_jac 	(int m, int n);					/*allocate compressed Jacobian matrices*/
+cs** alloc_jac 	(int m, int n);					/*allocate csc Jacobian matrices*/
 int free_jac 	(cs ** jac_stor);				/*free Jacobian matrices*/
 int reassign_jac (cs ** jac_stor, jac_name s, cs* A);		/*frees original pointer and reassigns*/
 
+/*old versions*/
+cs* add2 (cs * A, cs * B);			/*same as add - no diff parameter*/
+int mod2  (cs * A, cs * B);			/*less efficient version of mod*/
+int diffshape2 (cs * A, cs * B);		/*less efficient version of diffshape*/
 
 
 /*--------------------------------NOT USED--------------------------------------------------*/

@@ -41,7 +41,7 @@ int main()
 
 /*COMPARISON OF ADDING METHODS*/
 //	Method 1: mod2 or add2 w/ randmat
-	cs* A = randmat (10000,10000,0.001);
+	cs* A = randmat (100,100,0.001);
 /*	A = add2 (A,A);
 	print (A);
 */	cs_spfree (A);

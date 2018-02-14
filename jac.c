@@ -58,10 +58,11 @@ int add_jac (cs** jac_stor, jac_name s, int* i, int* j, double* x, int size)
 	int diff = 0; /*assume not different shape at first*/
 	cs* T;
 	cs* A = acc_jac (jac_stor,s);
-	if (A->nzmax == 0) {T = fcreate (A->m,A->n,i,j,x,size); reassign_jac (jac_stor,s,T); return 0; }
+	if (A->nzmax == 0) { set_jac (jac_stor,s,i,j,x,size); return 0; }
+
 	cs* B = fcreate (A->m,A->n,i,j,x,size);
-	T = add(A,B,&diff);
-	if (diff) reassign_jac (jac_stor,s,T); /*if different shape discovered, realloc*/
+	T = add (A,B,&diff);
+	if (diff) reassign_jac (jac_stor,s,T); /*if diff shape, reassign to T and free A*/
 	cs_spfree (B);
 	return 0;
 }

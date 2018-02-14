@@ -11,7 +11,7 @@ cs* randmat(int m, int n, double sparsity)
 	{
 		i = rand() % m;
 		j = rand() % n;
-		cs_entry (T,i,j,x);
+		if (!acc(T,i,j)) cs_entry (T,i,j,x);
 	}
 	C = cs_compress (T);
 	cs_spfree (T);

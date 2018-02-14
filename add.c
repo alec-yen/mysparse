@@ -8,17 +8,8 @@ cs* add(cs* A, cs* B, int *diff)
 {
 	cs* C;
 	if (!diffshape (A,B)) { mod (A,B); return A; }
-	else { C = cs_add (A,B,1,1); *diff = 1; return C; } /*FIX ME: won't work normally unless jac*/
+	else { C = cs_add (A,B,1,1); *diff = 1; return C; }
 }
-
-/*doesn't have diff parameter*/
-cs* add2(cs* A, cs* B)
-{
-	cs* C;
-	if (!diffshape (A,B)) { mod (A,B); return A; }
-	else { C = cs_add (A,B,1,1); return C; }
-}
-
 
 /*check if B fits inside A*/
 int diffshape (cs *A, cs *B)
@@ -27,7 +18,7 @@ int diffshape (cs *A, cs *B)
 	int m = A->m;
 	CS_INT *Ap, *Ai, *Bi, *Bp ;
 	Ap = A->p ; Ai = A->i ; Bi = B->i; Bp = B->p;
-	int* w = cs_calloc (m,sizeof(int));
+	int* w = cs_calloc (m,sizeof(int)); //stores count of each column
 
 	for (j=0;j<A->n;j++)
 	{
@@ -43,9 +34,8 @@ int diffshape (cs *A, cs *B)
 		for (p=Bp[j]; p<Bp[j+1]; p++)
 		{
 			i = Bi [p] ;                            
-			if (w [i] < mark) //if true, different shape
+			if (w [i] < mark) //if true, different shape and return
 			{
-				printf ("DIFFERENT SHAPE\n");
 				free (w);
 				return 1;
 			}
@@ -73,6 +63,8 @@ int mod (cs *A, cs *B)
 
 	for (j=0;j<A->n;j++)
 	{
+//		printf ("j = %d\n",j);
+		for (p=0;p<m;p++) x[p] = 0;
 		mark = j+1;
 		for (p=Ap[j]; p<Ap[j+1]; p++)
 		{
@@ -86,22 +78,42 @@ int mod (cs *A, cs *B)
 		}
 		for (p=Bp[j]; p<Bp[j+1]; p++)
 		{
-			i = Bi [p] ;                            
+			i = Bi [p] ;
+//			printf ("w[%d] = %d\tmark = %d\n",i,w[i],mark);
 			if (w [i] < mark) //should never be true
 			{
 				printf ("ERROR\n");
 				return 1;
 			}
-			else x [i] += Bx [p] ;
+			x [i] += Bx [p] ;
+//			printf ("added (%d %d)\n",Bi[p],j);
 		}
-		for (p = Ap [j] ; p < nz ; p++) Ax [p] += x [Ai [p]] ;
-	}
+		for (p = Ap [j] ; p < nz ; p++)
+		{
+
+			Ax [p] += x [Ai [p]] ;
+		}
+
+/*		printf ("w = [ ");
+		for (p=0;p<m;p++) printf ("%d ",w[p]);
+		printf ("]\n");
+*/	}
 	free (w); free (x);
 	return 0;
 }
 
 
-/***********************************OLD VERSIONS*******************************/
+
+/*----------------------------------OLD VERSIONS---------------------------------------*/
+/*doesn't have diff parameter*/
+cs* add2(cs* A, cs* B)
+{
+	cs* C;
+	if (!diffshape (A,B)) { mod (A,B); return A; }
+	else { C = cs_add (A,B,1,1); cs_spfree(A); return C; }
+}
+
+
 /*checks if B fits inside A*/
 int diffshape2 (cs* A, cs* B)
 {
