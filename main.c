@@ -1,27 +1,6 @@
 #include "mysparse.h"
-
-
-/*TESTING RESULTS*/
-/*
-(1) new diffshape+mod
-for 10,000x10,000 w/ 99,953 elements, looped inside the inner for loops a total of 199,906+299,859 = 499,765
-average time: 0.086
-for 10,000x10,000 w/ 199,836 elements, looped inside the inner for loops a total of 399,672+599,508 = 999,180
-average time: 0.155
-
-(2) his cs_add
-for 10,000x10,000 w/ 99,953 elements, looped inside the inner for loops a total of 299,859
-average time: 0.085
-for 10,000x10,000 w/ 199,836 elements, looped inside the inner for loops a total of 599,508
-average time: 0.159
-
-(3) old diffshape2+mod2
-for 10,000x10,000 w/ 99,953 elements, looped inside the inner for loops a total of 598,592*2 = 1,197,184
-average time: 0.087
-for 10,000x10,000 w/ 199,836 elements, looped inside the inner for loops a total of 2,192,637*2 = 4,385,274
-average time: 0.160
-*/
-
+#include <stdio.h>
+#include <time.h>
 
 int main(int argc, char ** argv)
 {
@@ -30,38 +9,63 @@ if (argc != 3) { printf ("ERROR: incorrect number of command line arguments\n");
 int a = atoi (argv[1]);
 int b = atoi (argv[2]);
 
-//frandmat ("m3.txt",10000,10000,.003);
 
-/*COMPARISON OF ADDING METHODS*/
-	if (a == 1)
+/*GENERATE MATRIX*/
+	if (a==0)
 	{
-		FILE * fp = fopen ("m3.txt", "r");
-		cs* T = cs_load (fp);
-		fclose (fp);
-		cs* A = cs_compress (T);
-		cs_spfree (T);
-		
-		if (b == 1) //Method 1: mod (new) w/ randmat
-		{
-			if (!(diffshape(A,A))) { mod(A,A); printf ("new mod %d elements\n",A->nzmax); }
-			cs_spfree (A);
-		}
-		else if (b == 2) //Method 2: cs_add w/ randmat
-		{
-			cs* B = addcs (A,A,1,1);
-			printf ("cs_add %d elements\n",B->nzmax);
-			cs_spfree (B);
-			cs_spfree (A);
-		}
-		else if (b == 3) //Method 3: mod2 (old) w/ randmat
-		{
-			if (!(diffshape2(A,A))) { mod2(A,A); printf ("old mod %d elements\n",A->nzmax); }
-			cs_spfree (A);
-		}
-		else { printf ("ERROR: wrong command line argument\n"); cs_spfree (A); return -1; }
-//		for (int i=0;i<A->nzmax;i++) { if (A->x[i] != 2) printf ("ERROR: incorrect sum\n"); }
+		frandmat ("m010.txt",10000,10000,.01); //CHANGE ME
 		return 0;
 	}
+
+/*COMPARISON OF ADDING METHODS*/
+	else if (a == 1)
+	{
+		clock_t t = clock();
+		double time_taken;
+		int repeat = 30; //CHANGE ME
+
+		for (int i=0; i<repeat; i++) {
+
+			FILE * fp = fopen ("m010.txt", "r"); //CHANGE ME
+			cs* T = cs_load (fp);
+			fclose (fp);
+			cs* A = cs_compress (T);
+			cs_spfree (T);
+
+			if (b == 1)
+			{
+				printf ("optimized: ");
+				t = clock();
+				if (!(diffshape(A,A)))
+				{ mod(A,A); printf ("%d\n",A->nzmax); }
+				t = clock() - t;
+				cs_spfree (A);
+			}
+			else if (b == 2)
+			{
+				printf ("cs_add: ");
+				t = clock();
+				cs* B = cs_add (A,A,1,1);
+				printf ("%d\n",B->nzmax);
+				t = clock() - t;
+				cs_spfree (B);
+				cs_spfree (A);
+			}
+			else { printf ("ERROR: wrong command line argument\n"); cs_spfree (A); return -1; }
+
+//			for (int i=0;i<A->nzmax;i++) { if (A->x[i] != 2) printf ("ERROR: incorrect sum\n"); }
+
+			time_taken = ((double)t)/CLOCKS_PER_SEC;
+			printf ("%f seconds to execute\n",time_taken);
+
+			fp = fopen ("time.txt","a");
+			fprintf (fp,"%f\n",time_taken);
+			fclose (fp);
+		}
+
+		return 0;
+	}
+
 
 /*ADD_JAC AND SET_JAC TESTING*/
 	else if (a == 2)
@@ -103,7 +107,6 @@ int b = atoi (argv[2]);
 		else { printf ("ERROR: wrong command line argument\n"); return -1; }
 	}
 	else { printf ("ERROR: wrong command line argument\n"); return -1; }
-	return 0;
 }
 
 

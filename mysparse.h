@@ -23,7 +23,6 @@ int array (const cs * A); 			/*prints three arrays of matrix*/
 int print (const cs * A); 			/*prints matrix in readable form*/
 
 /*randmat.c functions*/
-cs* randmat (int m, int n, double sparsity);
 int frandmat(char* f, int m, int n, double sparsity);
 
 /*jac.c functions (only work with compressed)*/

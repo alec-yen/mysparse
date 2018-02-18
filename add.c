@@ -18,14 +18,12 @@ int diffshape (cs *A, cs *B)
 	CS_INT *Ap, *Ai, *Bi, *Bp ;
 	Ap = A->p ; Ai = A->i ; Bi = B->i; Bp = B->p;
 	int* w = cs_calloc (m,sizeof(int)); //stores count of each column
-	int count = 0;
 
 	for (j=0;j<A->n;j++)
 	{
 		mark = j+1;
 		for (p=Ap[j]; p<Ap[j+1]; p++)
 		{
-			count++;
 			i = Ai [p] ;                            
 			if (w [i] < mark)
 			{
@@ -34,7 +32,6 @@ int diffshape (cs *A, cs *B)
 		}
 		for (p=Bp[j]; p<Bp[j+1]; p++)
 		{
-			count++;
 			i = Bi [p] ;                            
 			if (w [i] < mark) //if true, different shape and return
 			{
@@ -43,7 +40,6 @@ int diffshape (cs *A, cs *B)
 			}
 		}
 	}
-	printf ("loops = %d\n",count);
 	free (w);
 	return 0;
 }
@@ -63,7 +59,6 @@ int mod (cs *A, cs *B)
 	Ap = A->p ; Ai = A->i ; Ax = A->x ; Bi = B->i; Bp = B->p; Bx = B->x;
 	int* w = cs_calloc (m,sizeof(int));
 	double* x = cs_malloc (m,sizeof(double));
-	int count = 0;
 
 	for (j=0;j<A->n;j++)
 	{
@@ -77,7 +72,6 @@ int mod (cs *A, cs *B)
 				nz++;
 				x[i] = 0;      
 			}
-			count++;
 		}
 		for (p=Bp[j]; p<Bp[j+1]; p++)
 		{
@@ -88,16 +82,13 @@ int mod (cs *A, cs *B)
 				return 1;
 			}
 			x [i] += Bx [p] ;
-			count++;
 		}
 		for (p = Ap [j] ; p < nz ; p++)
 		{
 
 			Ax [p] += x [Ai [p]] ;
-			count++;
 		}
 	}
-	printf ("loops = %d\n",count);
 	free (w); free (x);
 	return 0;
 }
@@ -121,7 +112,6 @@ int diffshape2 (cs* A, cs* B)
 	int *Ai, *Ap, *Bi, *Bp;
 	Ai = A->i; Ap = A->p; Bn = B->n;
 	Bi = B->i; Bp = B->p;
-	int count = 0;
 	for (j=0;j<Bn;j++) /*loop through each column*/
 	{
 		for (p=Bp[j]; p<Bp[j+1]; p++) /*loop through B's row indices*/
@@ -129,7 +119,6 @@ int diffshape2 (cs* A, cs* B)
 			found = 0;
 			for (s=Ap[j]; s<Ap[j+1]; s++) /*compare with A's row indices*/
 			{
-				count++;
 				if (Bi[p] == Ai[s])
 				{
 					found = 1;
@@ -139,7 +128,6 @@ int diffshape2 (cs* A, cs* B)
 			if (!found ) return 1; /*return 1 if B does not fit in A*/
 		}
 	}
-	printf ("loops = %d\n",count);
 	return 0; /*return 0 if B fits in A*/
 }
 
@@ -152,14 +140,12 @@ int mod2 (cs *A, cs *B)
 	double *Ax, *Bx;
 	Ai = A->i; Ap = A->p; Ax = A->x; Bn = B->n;
 	Bi = B->i; Bp = B->p; Bx = B->x;
-	int count = 0;
 	for (j=0;j<Bn;j++) /*loop through each column*/
 	{
 		for (p=Bp[j]; p<Bp[j+1]; p++) /*loop through B's row indices*/
 		{
 			for (s=Ap[j]; s<Ap[j+1]; s++) /*compare with A's row indices*/
 			{
-				count++;
 				if (Bi[p] == Ai[s])
 				{
 					Ax[s] += Bx[p]; /*add value if equal row index*/
@@ -168,6 +154,5 @@ int mod2 (cs *A, cs *B)
 			}
 		}
 	}
-	printf ("loops = %d\n",count);
 	return 0; /*return 0 if successful*/
 }
