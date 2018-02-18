@@ -7,7 +7,7 @@ jac.o
 print.o
 test.o
 
-m001.txt
+*.txt
 m002.txt
 m003.txt
 m004.txt
