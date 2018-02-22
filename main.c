@@ -4,41 +4,57 @@
 
 int main(int argc, char ** argv)
 {
+/*argv[1] = operation1, argv[2] = operation2 or sparsity, argv[3] = filename */
 
-if (argc != 3) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
+if (argc != 4) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
 int a = atoi (argv[1]);
-int b = atoi (argv[2]);
 
 
 /*GENERATE MATRIX*/
 	if (a==0)
 	{
-		frandmat ("m010.txt",10000,10000,.01); //CHANGE ME
+		double s = atof (argv[2]);
+		frandmat (argv[3],10000,10000,s);
 		return 0;
 	}
 
 /*COMPARISON OF ADDING METHODS*/
 	else if (a == 1)
 	{
+		FILE *fp, *ft;
+		int succ = 1;
+		int b = atoi (argv[2]);
 		clock_t t = clock();
 		double time_taken;
 		int repeat = 30; //CHANGE ME
 
-		for (int i=0; i<repeat; i++) {
+		if (b==1)
+		{
+			ft = fopen ("time_opt.txt","a");
+			fprintf (ft, "%s ",argv[3]);
+		}
+		else if (b==2)
+		{
+			ft = fopen ("time_old.txt","a");
+			fprintf (ft, "%s ",argv[3]);
+		}
 
-			FILE * fp = fopen ("m010.txt", "r"); //CHANGE ME
+		for (int i=0; i<repeat; i++)
+		{
+			fp = fopen (argv[3], "r");
 			cs* T = cs_load (fp);
-			fclose (fp);
 			cs* A = cs_compress (T);
 			cs_spfree (T);
+			fclose (fp);
 
 			if (b == 1)
 			{
 				printf ("optimized: ");
 				t = clock();
 				if (!(diffshape(A,A)))
-				{ mod(A,A); printf ("%d\n",A->nzmax); }
+				{ mod(A,A); printf ("%d elements: ",A->nzmax); }
 				t = clock() - t;
+//				succ = 1; for (int i=0;i<A->nzmax;i++) { if (A->x[i] != 2) succ = 0; }
 				cs_spfree (A);
 			}
 			else if (b == 2)
@@ -46,22 +62,25 @@ int b = atoi (argv[2]);
 				printf ("cs_add: ");
 				t = clock();
 				cs* B = cs_add (A,A,1,1);
-				printf ("%d\n",B->nzmax);
+				printf ("%d elements: ",B->nzmax);
 				t = clock() - t;
+//				for (int i=0;i<B->nzmax;i++) { if (B->x[i] != 2) succ = 0; }
 				cs_spfree (B);
 				cs_spfree (A);
 			}
 			else { printf ("ERROR: wrong command line argument\n"); cs_spfree (A); return -1; }
 
-//			for (int i=0;i<A->nzmax;i++) { if (A->x[i] != 2) printf ("ERROR: incorrect sum\n"); }
+
+			if (succ) printf ("SUCCESS\n");
+			else printf ("FAILED\n");
 
 			time_taken = ((double)t)/CLOCKS_PER_SEC;
-			printf ("%f seconds to execute\n",time_taken);
+			printf ("%f sec\n",time_taken);
+			fprintf (ft, "%f ",time_taken);
 
-			fp = fopen ("time.txt","a");
-			fprintf (fp,"%f\n",time_taken);
-			fclose (fp);
 		}
+		fprintf (ft, "\n");
+		fclose (ft);
 
 		return 0;
 	}
@@ -70,6 +89,7 @@ int b = atoi (argv[2]);
 /*ADD_JAC AND SET_JAC TESTING*/
 	else if (a == 2)
 	{
+		int b = atoi (argv[2]);
 		/*predefined matrices*/
 		int r1[] =    {3,7,3,6,9,2,0,0,2};
 		int c1[] =    {6,5,5,2,1,7,9,6,6};
