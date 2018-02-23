@@ -6,6 +6,7 @@ int frandmat(char* f, int m, int n, double sparsity)
 	int i,j;
 	int nz = m*n*sparsity;
 	cs* T = cs_spalloc (m,n,nz,1,1);
+	srand (20);
 	for (i=0; i<m; i++)
 	{
 		for (j=0; j<n; j++)

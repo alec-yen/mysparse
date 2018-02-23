@@ -3,93 +3,97 @@
 #include <time.h>
 #include <string.h>
 
+/*0 to create, 1 to test */
+/*argv[1] = operation, argv[2] = sparsity */
 int main(int argc, char ** argv)
 {
-/*argv[1] = operation1, argv[2] = operation2, argv[3] = sparsity */
 
-if (argc != 4) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
+if (argc != 3) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
 int a = atoi (argv[1]);
-int b = atoi (argv[2]);
-
 
 int m = 10000; //CHANGE ME
-int n = 10000; //CHANGE ME
+int n = 10000;
+double start = .001;
+double increment = .001;
+int repeat = 300;
 
 /*GENERATE MATRIX*/
-	if (!a && !b)
+if (!a)
+{
+	double i, s = atof (argv[2]);
+	for (i=start; i<s; i+=increment)
 	{
-		double s = atof (argv[3]);
-		char* fname = malloc (strlen(argv[3])+10);
-		strcpy (fname, "m0");
-		strcat (fname, argv[3]);
-		strcat (fname, ".txt");
-		frandmat (fname,m,n,s);
+		char buffer[10];
+		int len = sprintf (buffer,"%.4f",i);
+		char* fname = malloc (len+20);
+		strcpy (fname, "data/m"); strcat (fname, buffer); strcat (fname, ".txt");
+		frandmat (fname,m,n,i);
+		printf ("created %s\n",fname);
 		free (fname);
-		return 0;
 	}
+	return 0;
+}
 
 /*COMPARISON OF ADDING METHODS*/
-	else if (a == 1)
+else if (a == 1)
+{
+	FILE *fp, *ft;
+	cs *T, *A = NULL, *B = NULL;
+	int j,k;
+	clock_t t1 = clock();
+	clock_t t2 = clock();
+	double ttaken1, ttaken2, tsum1, tsum2, sparsity;
+	double i,s = atof (argv[2]);
+
+	ft = fopen ("time.txt","a");
+	fprintf (ft, "new test\n");
+
+	for (i=start; i<s; i+=increment) /*loop through files*/
 	{
-		int succ = 1;
-		clock_t t = clock();
-		double time_taken, time_sum=0, sparsity;
-		int repeat = 30; //CHANGE ME
+		tsum1=0; tsum2=0;
 
-		FILE *fp, *ft;
-		if (b==1) ft = fopen ("time_opt.txt","a");
-		else if (b==2) ft = fopen ("time_old.txt","a");
+		char buffer[10];
+		int len = sprintf (buffer,"%.4f",i);
+		char* fname = malloc (len+20);
+		strcpy (fname, "data/m"); strcat (fname, buffer); strcat (fname, ".txt");
+	
+		fp = fopen (fname, "r");
+		T = cs_load (fp);
+		A = cs_compress (T);
+		cs_spfree (T); fclose (fp);
 
-		char* fname = malloc (strlen(argv[3])+10);
-		strcpy (fname, "m0");
-		strcat (fname, argv[3]);
-		strcat (fname, ".txt");
+		sparsity = (double)A->nzmax/(m*n);
 
-		for (int i=0; i<repeat; i++)
+		for (j=0; j<repeat; j++) /*loop through trials*/
 		{
-			fp = fopen (fname, "r");
-			cs* T = cs_load (fp);
-			cs* A = cs_compress (T);
-			cs_spfree (T);
-			fclose (fp);
+			t2 = clock();
+			B = cs_add (A,A,1,1);
+			t2 = clock() - t2;
 
-			sparsity = (double)A->nzmax/(m*n);
+			t1 = clock();
+			if (!(diffshape(A,A))) mod(A,A);
+			t1 = clock() - t1;
 
-			if (b == 1)
-			{
-				t = clock();
-				if (!(diffshape(A,A))) mod(A,A);
-				t = clock() - t;
-			
-//				printf ("optimized: ");
-//				succ = 1; for (int i=0;i<A->nzmax;i++) { if (A->x[i] != 2) succ = 0; }
-				cs_spfree (A);
-			}
-			else if (b == 2)
-			{
-				t = clock();
-				cs* B = cs_add (A,A,1,1);
-				t = clock() - t;
+/*			int succ = 1;
+			for (k=0;k<A->nzmax;k++) { if (A->x[k] != 2) succ = 0; }
+			for (k=0;k<B->nzmax;k++) { if (B->x[k] != 2) succ = 0; }
+			if (!succ) printf ("FAILED\n");
+*/			for (k=0;k<A->nzmax;k++) A->x[k] = 1;
 
-//				printf ("cs_add: ");
-//				for (int i=0;i<B->nzmax;i++) { if (B->x[i] != 2) succ = 0; }
-				cs_spfree (B);
-				cs_spfree (A);
-			}
-			else { printf ("ERROR: wrong command line argument\n"); cs_spfree (A); return -1; }
-
-
-//			if (succ) printf ("SUCCESS\n");
-//			else printf ("FAILED\n");
-
-			time_taken = ((double)t)/CLOCKS_PER_SEC;
-			time_sum += time_taken;
+			ttaken1 = ((double)t1)/CLOCKS_PER_SEC;
+			ttaken2 = ((double)t2)/CLOCKS_PER_SEC;
+			tsum1 += ttaken1; tsum2 += ttaken2;
+			cs_spfree (B); B = NULL;
 		}
-		printf ("%s %f %f\n",fname,sparsity,time_sum/repeat);
-		fprintf (ft, "%s %f %f\n",fname,sparsity,time_sum/repeat);
-		fclose (ft);
-		free (fname);
+		printf ("%f %f %f\n",sparsity,tsum1/repeat, tsum2/repeat);
+		fprintf (ft, "%f %f %f\n",sparsity,tsum1/repeat, tsum2/repeat);
 
-		return 0;
+		if (A != NULL) cs_spfree (A);
+		if (B != NULL) cs_spfree (B);	
+		free (fname);
 	}
+	fclose (ft);
+	return 0;
+}
+
 }
