@@ -1,12 +1,12 @@
 #include "mysparse.h"
 
-int frandmat(char* f, int m, int n, double sparsity)
+int frandmat(char* f, int m, int n, double sparsity, int seed)
 {
 	FILE* fp = fopen( f , "w");	
 	int i,j;
 	int nz = m*n*sparsity;
 	cs* T = cs_spalloc (m,n,nz,1,1);
-	srand (20);
+	srand (seed);
 	for (i=0; i<m; i++)
 	{
 		for (j=0; j<n; j++)
