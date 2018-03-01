@@ -23,7 +23,9 @@ int array (const cs * A); 			/*prints three arrays of matrix*/
 int print (const cs * A); 			/*prints matrix in readable form*/
 
 /*randmat.c functions*/
-int frandmat(char* f, int m, int n, double sparsity, int seed);
+cs* randmat(int m, int n, double sparsity, int seed);		/*create random matrix*/
+int frandmat(char* f, int m, int n, double sparsity, int seed);	/*write random matrix to file*/
+char* name (int rows, double sparsity, int seed);		/*create name for matrix file*/
 
 /*jac.c functions (only work with compressed)*/
 /*0 = success
