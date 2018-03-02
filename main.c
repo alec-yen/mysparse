@@ -1,185 +1,38 @@
 #include "mysparse.h"
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
-
-/* operation = 0 to create, 1 to test */
-/* ./main <operation> <start spars> <end spars> <increment> */
 
 int main(int argc, char ** argv)
 {
 
-if (argc != 5) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
-
-int a = atoi (argv[1]);
-double start = atof(argv[2]);
-double end = atof(argv[3]);
-double increment = atof(argv[4]);
-
-
-if ( ((a!=0)&&(a!=1)&&(a!=2)) ) { printf ("ERROR: invalid operation %d\n",a); return -1; }
-if ( (start>=1) || (end>=1) || (increment>=1) ) { printf ("ERROR: invalid start/end/increment\n"); return -1; }
-
-int m = 10000; //CHANGE ME
-int n = 10000;
-int seed = 2; int seed2 = 3;
-int repeat = 300;
-
-/*GENERATE MATRIX*/
-if (!a)
-{
-	double i;
-	char* fname;
-	printf ("CREATE: matrix: %dx%d, seed: %d, sparse: %.3f to %.3f\n",m,n,seed,start,end);
-	for (i=start; i<end+increment; i+=increment)
-	{
-		fname = name (m,i,seed);
-		frandmat (fname,m,n,i,seed);
-		printf ("%s\n",fname);
-		free (fname);
-	}
-	return 0;
-}
-
-/*COMPARISON OF ADDING METHODS*/
-else if (a == 1)
-{
-	FILE *fp, *ft;
-	cs *T, *A = NULL, *B = NULL;
-	int j,k;
-	clock_t t1 = clock(), t2 = clock();
-	double ttaken1, ttaken2, tsum1, tsum2, sparsity, i;
-	char* fname;
-
-	ft = fopen ("time.txt","a");
-	fprintf (ft, "\nTEST: %dx%d, seed: %d, trials: %d, sparse: %.3f to %.3f\n",m,n,seed,repeat,start,end);
-	printf ("TEST: matrix: %dx%d, seed: %d, trials: %d, sparse: %.3f to %.3f\n",m,n,seed,repeat,start,end);
-
-	for (i=start; i<end+increment; i+=increment)
-	{
-		fname = name (m,i,seed);	
-		if ((fp = fopen (fname, "r")))
-		{
-			T = cs_load (fp);
-			A = cs_compress (T);
-			cs_spfree (T); fclose (fp); free (fname);
-			tsum1=0; tsum2=0;
-			sparsity = (double)A->nzmax/(m*n);
-
-			for (j=0; j<repeat; j++)
-			{
-				t2 = clock();
-				B = cs_add (A,A,1,1);
-				t2 = clock() - t2;
-				t1 = clock();
-				if (!(diffshape(A,A))) mod(A,A);
-				t1 = clock() - t1;
-				ttaken1 = ((double)t1)/CLOCKS_PER_SEC;
-				ttaken2 = ((double)t2)/CLOCKS_PER_SEC;
-				tsum1 += ttaken1; tsum2 += ttaken2;
-
-				for (k=0;k<A->nzmax;k++) A->x[k] = 1;
-				cs_spfree (B); B = NULL;
-			}
-
-			printf ("%f %f %f\n",sparsity,tsum1/repeat, tsum2/repeat);
-			fprintf (ft, "%f %f %f\n",sparsity,tsum1/repeat, tsum2/repeat);
-			if (A != NULL) { cs_spfree (A); A = NULL; }
-			if (B != NULL) { cs_spfree (B); B = NULL; }
-		}
-		else
-		{
-			printf ("ERROR: file %s does not exist\n",fname);
-			if (A != NULL) cs_spfree (A);
-			if (B != NULL) cs_spfree (B);
-			fclose (ft);
-			free (fname);
-			return -1;	
-		}
-	}
-	fclose (ft);
-	return 0;
-}
-
-/*old test for validity of sum matrix*/
-/*				int succ = 1;
-				for (k=0;k<A->nzmax;k++) { if (A->x[k] != 2) succ = 0; }
-				for (k=0;k<B->nzmax;k++) { if (B->x[k] != 2) succ = 0; }
-				if (!succ) printf ("FAILED\n");
+/*	if (argc != 6) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
+	int a = atoi (argv[1]);
+	double start = atof(argv[2]);
+	double end = atof(argv[3]);
+	double increment = atof(argv[4]);
+	int m = atoi (argv[5]);
+	test (a,start,end,increment,m);
 */
 
-/*COMPARISON OF ADDING DIFFERENT SHAPES*/
-else if (a==2)
-{
-	FILE *fp1, *fp2, *ft;
-	cs *T, *S, *A = NULL, *B = NULL, *C = NULL;
-	int j;
-	clock_t t1 = clock(), t2 = clock();
-	double ttaken1, ttaken2, tsum1, tsum2, sparsity1, sparsity2, i;
-	char *fname1, *fname2;
 
-	ft = fopen ("time.txt","a");
-	fprintf (ft, "\nTEST: %dx%d, seeds: %d/%d, trials: %d, sparse: %.3f to %.3f\n",
-		m,n,seed,seed2,repeat,start,end);
-	printf ("TEST: matrix: %dx%d, seeds: %d/%d, trials: %d, sparse: %.3f to %.3f\n",
-		m,n,seed,seed2,repeat,start,end);
+	int r1[] =    {1,2,3, 0,2,4, 1,5, 0,1,3, 2,4, 0,5};
+	int c1[] =    {0,0,0, 1,1,1, 3,3, 4,4,4, 5,5, 6,6};
+	double v1[] = {4,7,10,1,8,12,5,14,2,6,11,9,13,3,15};
+	int size1 = sizeof(r1)/sizeof(r1[0]);
+        int r2[] =    {1,2,1,1};
+	int c2[] =    {0,1,3,5};
+	double v2[] = {100,100,100,100};
+	int size2 = sizeof(r2)/sizeof(r2[0]);
+	int m = 7; int n = 7;
 
-	for (i=start; i<end+increment; i+=increment)
-	{
-		fname1 = name (m,i,seed);
-		fname2 = name (m,i,seed2);	
-		if ((fp1 = fopen (fname1, "r")) && (fp2 = fopen (fname2,"r")))
-		{
-			T = cs_load (fp1); S = cs_load (fp2);
-			A = cs_compress (T); B = cs_compress (S);
+	cs* A = fcreate (m,n,r1,c1,v1,size1);
+	cs* B = fcreate (m,n,r2,c2,v2,size2);
+	print (A);	
+	print (B);	
 
-			cs_spfree (T); cs_spfree (S); fclose (fp1); fclose (fp2); free (fname1); free (fname2);
-			tsum1=0; tsum2=0;
-			sparsity1 = (double)A->nzmax/(m*n);
-			sparsity2 = (double)B->nzmax/(m*n);
+	A = add2 (A,B);
+	print (A);	
 
-			for (j=0; j<repeat; j++)
-			{
-				t2 = clock();
-				C = cs_add (A,B,1,1);
-				t2 = clock() - t2;
-				cs_spfree (C); C = NULL;
-				t1 = clock();
-				if (!(diffshape(A,B)))
-				{
-					mod(A,B);
-					printf("ERROR: matrices should not be same\n");
-					if (A != NULL) cs_spfree (A);
-					if (B != NULL) cs_spfree (B);
-					if (C != NULL) cs_spfree (C);
-					fclose (ft); free (fname1); free (fname2);
-					return -1;
-				}
-				else C = cs_add (A,B,1,1);
-				t1 = clock() - t1;
-				ttaken1 = ((double)t1)/CLOCKS_PER_SEC;
-				ttaken2 = ((double)t2)/CLOCKS_PER_SEC;
-				tsum1 += ttaken1; tsum2 += ttaken2;
-				cs_spfree (C); C = NULL;
-			}
-			printf ("%f %f %f %f\n",sparsity1, sparsity2, tsum1/repeat, tsum2/repeat);
-			fprintf (ft, "%f %f %f %f\n",sparsity1, sparsity2, tsum1/repeat, tsum2/repeat);
-			if (A != NULL) { cs_spfree (A); A = NULL; }
-			if (B != NULL) { cs_spfree (B); B = NULL; }
-			if (C != NULL) { cs_spfree (C); C = NULL; }
-		}
-		else
-		{
-			printf ("ERROR: file %s or %s does not exist\n",fname1,fname2);
-			if (A != NULL) cs_spfree (A);
-			if (B != NULL) cs_spfree (B);
-			if (C != NULL) cs_spfree (C);
-			fclose (ft); free (fname1); free (fname2);
-			return -1;
-		}
-	}
-	fclose (ft);
+	cs_spfree (A);
+	cs_spfree (B);
+
 	return 0;
-}
-
 }

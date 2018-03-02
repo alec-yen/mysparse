@@ -5,27 +5,16 @@ item (i, j) can be accessed as data[indptr[j]+k], where k is position of i in in
 
 double acc(const cs *A, int r, int c)
 {
-
-	int *i, *p, a, b, k, found;
-	double *x, v;
-	found = 0;
+	int p;
 	if (A->nz == -1)
 	{	
-		i = A->i; p = A->p; x = A->x;
-		a = p[c]; b = p[c+1];
-		for (k=0;k<b-a;k++) { if (r == i[k+a]) { found = 1; break; } }
-		if (!found) return 0; /*return 0 if not found*/
-		v = x[p[c]+k];
-		return v; /*return value if found*/
+		for (p = A->p[c] ; p < A->p[c+1] ; p++) { if (r == A->i[p]) return A->x[p]; } /*return if found*/
 	}
 	else if (A->nz >= 0)
 	{
-		for (k=0; k<A->nz; k++)	if (A->i[k] == r && A->p[k] == c) {v = A->x[k]; found = 1; break;}
-		if (!found) return 0;
-		return v;
+		for (p=0; p<A->nz; p++)	{ if (A->i[p] == r && A->p[p] == c) return A->x[p]; }
 	}
-	return 0;
-	//add else statement
+	return 0; /*return 0 if not found*/
 }
 
 /*print the three arrays of compressed sparse column format*/

@@ -1,16 +1,10 @@
 #include "cs.h"
 
-
 /*add.c functions*/
 cs* add  (cs * A, cs * B, int * diff);		/*adds matrices, sets diff=1 if diffshape (for jac.c)*/
+cs* add2 (cs * A, cs * B);			/*same as add - no diff parameter*/
 int mod  (cs * A, cs * B);			/*adds matrices iff same shape together*/
 int diffshape (cs * A, cs * B);			/*returns 1 if matrices have diff shape*/
-
-/*add_his.c functions*/
-CS_INT scattercs (const cs *A, CS_INT j, CS_ENTRY beta, CS_INT *w, CS_ENTRY *x, CS_INT mark,
-    cs *C, CS_INT nz, int* count);
-cs *addcs (const cs *A, const cs *B, CS_ENTRY alpha, CS_ENTRY beta);
-
 
 /*create.c functions*/
 cs * ecreate (int m, int n, int triplet);			/*returns empty matrix (csc or trip)*/
@@ -27,6 +21,10 @@ cs* randmat(int m, int n, double sparsity, int seed);		/*create random matrix*/
 int frandmat(char* f, int m, int n, double sparsity, int seed);	/*write random matrix to file*/
 char* name (int rows, double sparsity, int seed);		/*create name for matrix file*/
 
+/*test.c functions*/
+int test(int a, double start, double end, double increment, int m);	/*test adding matrices*/
+
+
 /*jac.c functions (only work with compressed)*/
 /*0 = success
   1 = clear function fail (set) or no matrices to free (free)
@@ -42,10 +40,17 @@ cs** alloc_jac 	(int m, int n);					/*allocate csc Jacobian matrices*/
 int free_jac 	(cs ** jac_stor);				/*free Jacobian matrices*/
 int reassign_jac (cs ** jac_stor, jac_name s, cs* A);		/*frees original pointer and reassigns*/
 
-/*old versions*/
-cs* add2 (cs * A, cs * B);			/*same as add - no diff parameter*/
-int mod2  (cs * A, cs * B);			/*less efficient version of mod*/
-int diffshape2 (cs * A, cs * B);		/*less efficient version of diffshape*/
+
+/*add_his.c functions (for efficiency testing purposes)*/
+CS_INT scattercs (const cs *A, CS_INT j, CS_ENTRY beta, CS_INT *w, CS_ENTRY *x, CS_INT mark,
+    cs *C, CS_INT nz, int* count);
+cs *addcs (const cs *A, const cs *B, CS_ENTRY alpha, CS_ENTRY beta);
+
+
+
+
+
+
 
 
 /*--------------------------------NOT USED--------------------------------------------------*/
