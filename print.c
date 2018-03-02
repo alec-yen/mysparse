@@ -1,18 +1,37 @@
 #include "mysparse.h"
 
-/*returns value at give row and column of a matrix
-item (i, j) can be accessed as data[indptr[j]+k], where k is position of i in indices[indptr[j]:indptr[j+1]]*/
+/*binary search*/
+int binarySearch(int arr[], int l, int r, int x)
+{
+	while (l <= r)
+	{
+		int m = l + (r-l)/2;
+		printf ("m = %d\n",m);
+		if (arr[m] == x) return m;
+		else if (arr[m] < x) l = m + 1; 
+		else r = m - 1;
+	}
+	return -1;
+}
 
-double acc(const cs *A, int r, int c)
+/*returns value at give row and column of a matrix
+  item (i, j) can be accessed as data[indptr[j]+k], where k is position of i in indices[indptr[j]:indptr[j+1]]*/
+
+double acc(const cs *A, int i, int j)
 {
 	int p;
 	if (A->nz == -1)
 	{	
-		for (p = A->p[c] ; p < A->p[c+1] ; p++) { if (r == A->i[p]) return A->x[p]; } /*return if found*/
+/*		p = binarySearch (A->i,A->p[j],A->p[j+1]-1,i);
+		if (p!=-1) return A->x[p];
+*/		for (p = A->p[j] ; p < A->p[j+1] ; p++)
+		{
+			if (i == A->i[p]) return A->x[p];
+		}
 	}
 	else if (A->nz >= 0)
 	{
-		for (p=0; p<A->nz; p++)	{ if (A->i[p] == r && A->p[p] == c) return A->x[p]; }
+		for (p=0; p<A->nz; p++)	{ if (A->i[p] == i && A->p[p] == j) return A->x[p]; }
 	}
 	return 0; /*return 0 if not found*/
 }
@@ -22,7 +41,7 @@ double acc(const cs *A, int r, int c)
 int array (const cs *A)
 {
 	if (!A) return 1; /*return 1 if invalid*/
-	
+
 	int m,n,nz,nzmax, *i, *p, k;
 	double *x;
 	m = A-> m; n = A->n; i = A->i; p = A->p; x = A->x; nzmax = A->nzmax; nz = A->nz;

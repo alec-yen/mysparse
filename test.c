@@ -11,9 +11,9 @@ int test(int a, double start, double end, double increment, int m)
 if ( ((a!=0)&&(a!=1)&&(a!=2)) ) { printf ("ERROR: invalid operation %d\n",a); return -1; }
 if ( (start>=1) || (end>=1) || (increment>=1) ) { printf ("ERROR: invalid start/end/increment\n"); return -1; }
 
-int n = m; //CHANGE ME
+int n = m;
 int seed = 2; int seed2 = 3;
-int repeat = 300;
+int repeat = 1; //CHANGE ME
 
 /*GENERATE MATRIX*/
 if (!a)
@@ -62,7 +62,7 @@ else if (a == 1)
 				B = cs_add (A,A,1,1);
 				t2 = clock() - t2;
 				t1 = clock();
-				if (!(diffshape(A,A))) mod(A,A);
+				if (!(diff(A,A))) nd_add(A,A);
 				t1 = clock() - t1;
 				ttaken1 = ((double)t1)/CLOCKS_PER_SEC;
 				ttaken2 = ((double)t2)/CLOCKS_PER_SEC;
@@ -135,9 +135,9 @@ else if (a==2)
 				t2 = clock() - t2;
 				cs_spfree (C); C = NULL;
 				t1 = clock();
-				if (!(diffshape(A,B)))
+				if (!(diff(A,B)))
 				{
-					mod(A,B);
+					nd_add(A,B);
 					printf("ERROR: matrices should not be same\n");
 					if (A != NULL) cs_spfree (A);
 					if (B != NULL) cs_spfree (B);

@@ -1,10 +1,10 @@
 #include "cs.h"
 
 /*add.c functions*/
-cs* add  (cs * A, cs * B, int * diff);		/*adds matrices, sets diff=1 if diffshape (for jac.c)*/
-cs* add2 (cs * A, cs * B);			/*same as add - no diff parameter*/
-int mod  (cs * A, cs * B);			/*adds matrices iff same shape together*/
-int diffshape (cs * A, cs * B);			/*returns 1 if matrices have diff shape*/
+cs* add  (cs * A, cs * B, int * flag);		/*adds matrices, sets flag=1 if diff index (for jac.c)*/
+cs* add2 (cs * A, cs * B);			/*same as add - no flag parameter*/
+int nd_add  (cs * A, cs * B);			/*adds matrices iff no diff index*/
+int diff (cs * A, cs * B);			/*0 if no diff index, 1 if all diff index, 2 if some diff index*/
 
 /*create.c functions*/
 cs * ecreate (int m, int n, int triplet);			/*returns empty matrix (csc or trip)*/
@@ -12,7 +12,7 @@ cs * fcreate (int m, int n, int* i, int* j, double* x, int size); /*returns fill
 int clear (cs * A);						/*deletes all elements of matrix*/
 
 /*print.c functions*/
-double acc (const cs * A, int r, int c);	/*returns value found at index*/
+double acc (const cs * A, int i, int j);	/*returns value found at index*/
 int array (const cs * A); 			/*prints three arrays of matrix*/
 int print (const cs * A); 			/*prints matrix in readable form*/
 

@@ -3,17 +3,17 @@
 /*adds csc matrix B to csc matrix A - requires allocations if different indices*/
 /*diff should be 0 when passed*/
 
-cs* add(cs* A, cs* B, int *diff)
+cs* add(cs* A, cs* B, int *flag)
 {
 	cs* C;
-	if (!diffshape (A,B)) { mod (A,B); return A; }
-	else { C = cs_add (A,B,1,1); *diff = 1; return C; }
+	if (!diff (A,B)) { nd_add (A,B); return A; }
+	else { C = cs_add (A,B,1,1); *flag = 1; return C; }
 }
 
-/*check if B fits inside A*/
-int diffshape (cs *A, cs *B)
+/*returns 0 if no diff indices, 1 if all diff, 2 if some diff*/
+int diff (cs *A, cs *B)
 {
-	int j,p,i,mark;
+	int j,p,i,mark,flag=-1;
 	int m = A->m;
 	CS_INT *Ap, *Ai, *Bi, *Bp ;
 	Ap = A->p ; Ai = A->i ; Bi = B->i; Bp = B->p;
@@ -25,27 +25,29 @@ int diffshape (cs *A, cs *B)
 		for (p=Ap[j]; p<Ap[j+1]; p++)
 		{
 			i = Ai [p] ;                            
-			if (w [i] < mark)
-			{
-				w [i] = mark ;
-			}
+			if (w [i] < mark) w [i] = mark ;
 		}
 		for (p=Bp[j]; p<Bp[j+1]; p++)
 		{
 			i = Bi [p] ;                            
-			if (w [i] < mark) //if true, different shape and return
+			if (w [i] < mark) //different index
 			{
-				free (w);
-				return 1;
+				if (!flag) { free (w); return 2; } //some diff indices
+				else if (flag == -1) flag = 1;
+			}
+			else //same index
+			{
+				if (flag==1) { free (w); return 2; } //some diff indices
+				else if (flag == -1) flag = 0;
 			}
 		}
 	}
 	free (w);
-	return 0;
+	return flag; //either no diff or all diff indices
 }
 
 /*given that csc B fits in csc A, add B elements to A*/
-int mod (cs *A, cs *B)
+int nd_add (cs *A, cs *B)
 {
 	int j,p,i,mark;
 	int m = A->m, nz=0;
@@ -79,11 +81,7 @@ int mod (cs *A, cs *B)
 			}
 			x [i] += Bx [p] ;
 		}
-		for (p = Ap [j] ; p < nz ; p++)
-		{
-
-			Ax [p] += x [Ai [p]] ;
-		}
+		for (p = Ap [j] ; p < nz ; p++) Ax [p] += x [Ai [p]] ;
 	}
 	free (w); free (x);
 	return 0;
@@ -92,11 +90,11 @@ int mod (cs *A, cs *B)
 
 
 /*----------------------------------OLD VERSIONS---------------------------------------*/
-/*doesn't have diff parameter*/
+/*doesn't have flag parameter*/
 cs* add2(cs* A, cs* B)
 {
 	cs* C;
-	if (!diffshape (A,B)) { mod (A,B); return A; }
+	if (!diff (A,B)) { nd_add (A,B); return A; }
 	else { C = cs_add (A,B,1,1); cs_spfree(A); return C; }
 }
 

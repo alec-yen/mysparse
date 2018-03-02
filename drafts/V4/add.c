@@ -25,6 +25,45 @@ int mod2 (cs *A, cs *B)
 	return 0; /*return 0 if successful*/
 }
 
+
+/*check if B fits inside A*/
+int diffshape (cs *A, cs *B)
+{
+	int j,p,i,mark,loop=0;
+	int m = A->m;
+	CS_INT *Ap, *Ai, *Bi, *Bp ;
+	Ap = A->p ; Ai = A->i ; Bi = B->i; Bp = B->p;
+	int* w = cs_calloc (m,sizeof(int)); //stores count of each column
+
+	for (j=0;j<A->n;j++)
+	{
+		mark = j+1;
+		for (p=Ap[j]; p<Ap[j+1]; p++)
+		{
+			//loop++;
+			i = Ai [p] ;                            
+			if (w [i] < mark)
+			{
+				w [i] = mark ;
+			}
+		}
+		for (p=Bp[j]; p<Bp[j+1]; p++)
+		{
+			//loop++;
+			i = Bi [p] ;                            
+			if (w [i] < mark) //if true, different shape and return
+			{
+				free (w);
+				return 1;
+			}
+		}
+	}
+	//printf ("diff loop = %d\n",loop);
+	free (w);
+	return 0;
+}
+
+
 /*checks if B fits inside A*/
 int diffshape2 (cs* A, cs* B)
 {
