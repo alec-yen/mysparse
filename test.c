@@ -1,6 +1,25 @@
 #include "mysparse.h"
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
+
+/*create random matrix file name*/
+char* name (int rows, double sparsity, int seed)
+{
+	char buffer_rows[10];
+	char buffer_spars[10];
+	char buffer_seed[10];
+	int len = sprintf (buffer_rows,"%05d",rows);
+	len += sprintf (buffer_spars,"%.3f",sparsity);
+	len += sprintf (buffer_seed,"%02d",seed);
+	char* fname = malloc (len+15);
+	strcpy (fname, "data/m");
+	strcat (fname, buffer_rows); strcat (fname, "_");
+	strcat (fname, buffer_seed); strcat (fname, "_");
+	strcat (fname, buffer_spars); strcat (fname, ".txt");
+	return fname;
+}
+
 
 /* operation = 0 to create, 1 to add same matrix, 2 to add diff matrix */
 /* ./main <operation> <start spars> <end spars> <increment> <number of rows/columns> */

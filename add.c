@@ -1,15 +1,5 @@
 #include "mysparse.h"
 
-/*adds csc matrix B to csc matrix A - requires allocations if different indices*/
-/*diff should be 0 when passed*/
-
-cs* add(cs* A, cs* B, int *flag)
-{
-	cs* C;
-	if (!diff (A,B)) { nd_add (A,B); return A; }
-	else { C = cs_add (A,B,1,1); *flag = 1; return C; }
-}
-
 /*returns 0 if no diff indices, 1 if all diff, 2 if some diff*/
 int diff (cs *A, cs *B)
 {
@@ -87,9 +77,16 @@ int nd_add (cs *A, cs *B)
 	return 0;
 }
 
+/*adds csc matrix B to csc matrix A - requires allocations if all/some diff index*/
+/*flag should be 0 when passed*/
+cs* add(cs* A, cs* B, int *flag)
+{
+	cs* C;
+	if (!diff (A,B)) { nd_add (A,B); return A; }
+	else { C = cs_add (A,B,1,1); *flag = 1; return C; }
+}
 
 
-/*----------------------------------OLD VERSIONS---------------------------------------*/
 /*doesn't have flag parameter*/
 cs* add2(cs* A, cs* B)
 {

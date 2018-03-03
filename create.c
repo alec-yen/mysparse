@@ -1,37 +1,38 @@
 #include "mysparse.h"
 
 /*returns empty compressed or triplet matrix */
-
-cs* ecreate (int m, int n, int triplet)
+cs* ecreate (int m, int n, int trip)
 {
 	int k; cs* A;
-	if (!triplet)
+	if (!trip)
 	{
 		A = cs_spalloc (m,n,0,1,0);
 		A->nzmax = 0;
 		for (k=0;k<n+1;k++) A->p[k]=0;
 	}
-	else if (triplet) A = cs_spalloc (m,n,m*n,1,1);
+	else A = cs_spalloc (m,n,m*n,1,1);
 	return A;
 }
 
 
 /*returns filled compressed matrix*/
-
-cs* fcreate (int m, int n, int* i, int* j, double* x, int size)
+cs* fcreate (int m, int n, int* i, int* j, double* x, int size, int trip)
 {
 	int k;
 	cs* A = ecreate (m,n,1);
 	for (k=0;k<size;k++) { cs_entry(A,i[k],j[k],x[k]); }
-	cs* C = cs_compress (A);
-	cs_spfree (A);
-	return C;
+	if (!trip)
+	{
+		cs* C = cs_compress (A);
+		cs_spfree (A);
+		return C;
+	}
+	else return A;
 }
 
 
 
 /*removes all values from a matrix*/
-
 int clear(cs *A)
 {
 	if (!A) return 1; /*return 1 if invalid*/

@@ -1,30 +1,13 @@
 #include "mysparse.h"
 
-/*binary search*/
-int binarySearch(int arr[], int l, int r, int x)
-{
-	while (l <= r)
-	{
-		int m = l + (r-l)/2;
-		printf ("m = %d\n",m);
-		if (arr[m] == x) return m;
-		else if (arr[m] < x) l = m + 1; 
-		else r = m - 1;
-	}
-	return -1;
-}
-
 /*returns value at give row and column of a matrix
   item (i, j) can be accessed as data[indptr[j]+k], where k is position of i in indices[indptr[j]:indptr[j+1]]*/
-
 double acc(const cs *A, int i, int j)
 {
 	int p;
 	if (A->nz == -1)
 	{	
-/*		p = binarySearch (A->i,A->p[j],A->p[j+1]-1,i);
-		if (p!=-1) return A->x[p];
-*/		for (p = A->p[j] ; p < A->p[j+1] ; p++)
+		for (p = A->p[j] ; p < A->p[j+1] ; p++)
 		{
 			if (i == A->i[p]) return A->x[p];
 		}
@@ -37,7 +20,6 @@ double acc(const cs *A, int i, int j)
 }
 
 /*print the three arrays of compressed sparse column format*/
-
 int array (const cs *A)
 {
 	if (!A) return 1; /*return 1 if invalid*/
@@ -72,7 +54,6 @@ int array (const cs *A)
 }
 
 /*prints compressed matrix onto screen*/
-
 int print (const cs *A)
 {
 	if (!A) return 1; /*return 1 if invalid*/
