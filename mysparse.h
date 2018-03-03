@@ -1,12 +1,12 @@
 #include "cs.h"
 
 /*add.c + set.c public functions*/
-int diff (cs * A, cs * B);			/*ret 0 if no diff index, 1 if all diff index, 2 if some diff index*/
 cs* add  (cs * A, cs * B, int * flag);		/*adds matrices, sets flag=1 if diff index*/
 cs* add2 (cs * A, cs * B);
 cs* set  (cs * A, cs * B, int * flag);		/*sets matrices, sets flag=1 if diff index*/
 cs* set2 (cs * A, cs * B);
 int nd_add (cs *A, cs *B);			/*FIX ME: public only for testing*/
+int a_diff (cs * A, cs * B);			/*FIX ME: public only for testing*/
 
 /*create.c functions*/
 cs * ecreate (int m, int n, int trip);						/*returns empty matrix*/

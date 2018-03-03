@@ -81,7 +81,7 @@ else if (a == 1)
 				B = cs_add (A,A,1,1);
 				t2 = clock() - t2;
 				t1 = clock();
-				if (!(diff(A,A))) nd_add(A,A);
+				if (!(a_diff(A,A))) nd_add(A,A);
 				t1 = clock() - t1;
 				ttaken1 = ((double)t1)/CLOCKS_PER_SEC;
 				ttaken2 = ((double)t2)/CLOCKS_PER_SEC;
@@ -154,7 +154,7 @@ else if (a==2)
 				t2 = clock() - t2;
 				cs_spfree (C); C = NULL;
 				t1 = clock();
-				if (!(diff(A,B)))
+				if (!(a_diff(A,B)))
 				{
 					nd_add(A,B);
 					printf("ERROR: matrices should not be same\n");
@@ -177,7 +177,7 @@ else if (a==2)
 			if (B != NULL) { cs_spfree (B); B = NULL; }
 			if (C != NULL) { cs_spfree (C); C = NULL; }
 		}
-		else
+		else //FIX ME: does not close files correctly
 		{
 			printf ("ERROR: file %s or %s does not exist\n",fname1,fname2);
 			if (A != NULL) cs_spfree (A);

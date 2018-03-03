@@ -1,9 +1,9 @@
 #include "mysparse.h"
 
-/*returns 0 if no diff indices, 1 if all diff, 2 if some diff*/
-int diff (cs *A, cs *B)
+/*returns 0 if no diff indices, 1 if all/some diff*/
+int a_diff (cs *A, cs *B)
 {
-	int j,p,i,mark,flag=-1;
+	int j,p,i,mark;
 	int m = A->m;
 	CS_INT *Ap, *Ai, *Bi, *Bp ;
 	Ap = A->p ; Ai = A->i ; Bi = B->i; Bp = B->p;
@@ -20,20 +20,10 @@ int diff (cs *A, cs *B)
 		for (p=Bp[j]; p<Bp[j+1]; p++)
 		{
 			i = Bi [p] ;                            
-			if (w [i] < mark) //different index
-			{
-				if (!flag) { free (w); return 2; } //some diff indices
-				else if (flag == -1) flag = 1;
-			}
-			else //same index
-			{
-				if (flag==1) { free (w); return 2; } //some diff indices
-				else if (flag == -1) flag = 0;
-			}
+			if (w [i] < mark) { free (w); return 1; } //diff index
 		}
 	}
-	free (w);
-	return flag; //either no diff or all diff indices
+	free (w); return 0;
 }
 
 /*given that csc B fits in csc A, add B elements to A*/
@@ -82,16 +72,16 @@ int nd_add (cs *A, cs *B)
 cs* add(cs* A, cs* B, int *flag)
 {
 	cs* C;
-	if (!diff (A,B)) { nd_add (A,B); return A; }
+	if (!a_diff (A,B)) { nd_add (A,B); return A; }
 	else { C = cs_add (A,B,1,1); *flag = 1; return C; }
 }
 
 
-/*doesn't have flag parameter*/
+/*doesn't have flag parameter (for testing purposes)*/
 cs* add2(cs* A, cs* B)
 {
 	cs* C;
-	if (!diff (A,B)) { nd_add (A,B); return A; }
+	if (!a_diff (A,B)) { nd_add (A,B); return A; }
 	else { C = cs_add (A,B,1,1); cs_spfree(A); return C; }
 }
 

@@ -15,7 +15,7 @@ cs* ecreate (int m, int n, int trip)
 }
 
 
-/*returns filled compressed matrix*/
+/*returns filled compressed or triplet matrix*/
 cs* fcreate (int m, int n, int* i, int* j, double* x, int size, int trip)
 {
 	int k;
@@ -32,7 +32,7 @@ cs* fcreate (int m, int n, int* i, int* j, double* x, int size, int trip)
 
 
 
-/*removes all values from a matrix*/
+/*removes all values from a matrix (FIX ME)*/
 int clear(cs *A)
 {
 	if (!A) return 1; /*return 1 if invalid*/

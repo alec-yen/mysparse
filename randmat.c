@@ -27,7 +27,7 @@ int frandmat(char* f, int m, int n, double sparsity, int seed)
 }
 
 
-/*create random matrix*/
+/*create random csc matrix*/
 cs* randmat(int m, int n, double sparsity, int seed)
 {
 	int i,j;
@@ -38,9 +38,11 @@ cs* randmat(int m, int n, double sparsity, int seed)
 	{
 		for (j=0; j<n; j++)
 		{
-			if ( ( ((double)rand()/(double)RAND_MAX) < sparsity ) && (T->nz < nz) ) cs_entry (T,i,j,1);
+			if ( ( ((double)rand()/(double)RAND_MAX) < sparsity ) && (T->nz < nz) ) cs_entry (T,i,j,rand()%100);
 		}
 	}
-	return T;
+	cs* C = cs_compress (T);
+	cs_spfree (T);
+	return C;
 
 }

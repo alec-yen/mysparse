@@ -16,13 +16,13 @@ int main(int argc, char ** argv)
 */
 
 
-	int r1[] =    {3, 0,3,2,1, 0,2,4, 1,5, 1,2,4, 0,5};
+/*	int r1[] =    {3, 0,3,2,1, 0,2,4, 1,5, 1,2,4, 0,5};
 	int c1[] =    {4, 4,0,0,0, 1,1,1, 3,3, 4,5,5, 6,6};
 	double v1[] = {11,2,4,7,10,1,8,12,5,14,6,9,13,3,15};
 	int size1 = sizeof(r1)/sizeof(r1[0]);
-        int r2[] =    {0,4};
-	int c2[] =    {5,1};
-	double v2[] = {100,100};
+        int r2[] =    {6,4,5,3,6,6};
+	int c2[] =    {3,2,4,5,5,6};
+	double v2[] = {101,102,103,104,105,106};
 	int size2 = sizeof(r2)/sizeof(r2[0]);
 	int m = 7; int n = 7;
 
@@ -33,9 +33,23 @@ int main(int argc, char ** argv)
 	print (B);
 
 	A = set2 (A,B);
-	array (A);
+	array (B);
 	print (A);
 
+	cs_spfree (A);
+	cs_spfree (B);
+*/
+
+	cs* A = randmat (10,10,.5,2);
+        int r2[] =    {1,8};
+	int c2[] =    {1,9};
+	double v2[] = {100,100};
+	int size2 = sizeof(r2)/sizeof(r2[0]);
+	cs* B = fcreate(10,10,r2,c2,v2,size2,0);
+	print (A);
+	print (B);
+	A = set2 (A,B);
+	print (A);
 	cs_spfree (A);
 	cs_spfree (B);
 
