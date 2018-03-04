@@ -77,7 +77,7 @@ cs* add(cs* A, cs* B, int *flag)
 }
 
 
-/*doesn't have flag parameter (for testing purposes)*/
+/*doesn't have flag parameter and frees A (for testing purposes)*/
 cs* add2(cs* A, cs* B)
 {
 	cs* C;

@@ -22,11 +22,7 @@ int array (const cs * A); 			/*prints three arrays of matrix*/
 int print (const cs * A); 			/*prints matrix in readable form*/
 
 
-/*jac.c functions (only work with compressed)*/
-/*0 = success
-  1 = clear function fail (set) or no matrices to free (free)
-  2 = add function fail (set, add)
-  3 = invalid indices (set,add)*/
+/*jac.c functions (for csc matrix)*/
 typedef enum 	{ Fx,Fy,Gx,Gy,Fx0,Fy0,Gx0,Gy0} jac_name;	/*names of Jacobian matrices*/
 cs* acc_jac   	(cs ** jac_stor, jac_name s);			/*returns Jacobian matrix given name s*/
 int add_jac  	(cs ** jac_stor, jac_name s, 			/*adds r,c,v arrays to empty Jacobian matrix*/

@@ -17,10 +17,10 @@ int s_diff (cs* A, cs* B, bool* nd)
 {
 	int j,p,i,mark,k=0;
 	int flag=-1;
-	int m = A->m;
 	CS_INT *Ap, *Ai, *Bi, *Bp ;
+
 	Ap = A->p ; Ai = A->i ; Bi = B->i; Bp = B->p;
-	int* w = cs_calloc (m,sizeof(int)); //stores count of each column
+	int* w = cs_calloc (A->m,sizeof(int)); //stores count of each column
 
 	for (j=0;j<A->n;j++)
 	{
@@ -33,11 +33,10 @@ int s_diff (cs* A, cs* B, bool* nd)
 		for (p=Bp[j]; p<Bp[j+1]; p++)
 		{
 			i = Bi [p] ;
-			if (w [i] < mark) //different index
+			if (w [i] < mark) //diff index
 			{
 				if (!flag) flag = 2; //some diff indices
 				else if (flag == -1) flag = 1;
-				nd[k] = 0;
 			}
 			else //existing index
 			{
@@ -89,7 +88,7 @@ cs* sd_set (cs* A, cs* B, bool* nd)
 cs* set (cs* A, cs* B, int* flag)
 {
 	cs * C = NULL;
-	bool* nd = calloc (0,B->nzmax * sizeof(bool));
+	bool* nd = calloc (B->nzmax, sizeof(bool));
 	int f = s_diff (A,B,nd);
 	if (!f)
 	{
@@ -99,17 +98,15 @@ cs* set (cs* A, cs* B, int* flag)
 	}
 	else if (f == 1) C = cs_add (A,B,1,1);
 	else if (f == 2) C = sd_set (A,B,nd);
-	*flag = 1;
-	cs_spfree (A); free (nd);
+	free (nd); *flag = 1;
 	return C;
 }
 
-/*doesn't have flag parameter (for testing purposes)*/
+/*doesn't have flag parameter and frees A (for testing purposes)*/
 cs* set2 (cs* A, cs* B)
 {
 	cs * C = NULL;
-	bool* nd = malloc (B->nzmax * sizeof(bool));
-
+	bool* nd = calloc (B->nzmax, sizeof(bool));
 	int f = s_diff (A,B,nd);
 	if (!f)
 	{
@@ -128,7 +125,6 @@ cs* set2 (cs* A, cs* B)
 		printf ("some diff index\n");
 		C = sd_set (A,B,nd);
 	}
-
 	cs_spfree (A); free (nd);
 	return C;
 }
