@@ -11,7 +11,7 @@ int main(int argc, char ** argv)
 	double start = atof(argv[2]);
 	double end = atof(argv[3]);
 	double increment = atof(argv[4]);
-	int m = atoi (argv[5]);
+	double m = atof (argv[5]);
 	test (a,start,end,increment,m);
 
 

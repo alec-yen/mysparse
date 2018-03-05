@@ -15,7 +15,7 @@ cs * fcreate (int m, int n, int* i, int* j, double* x, int size, int trip); 	/*r
 /*randmat.c + test.c functions*/
 cs* randmat(int m, int n, double sparsity, int seed);			/*create random matrix*/
 int frandmat(char* f, int m, int n, double sparsity, int seed);		/*write random matrix to file*/
-int test(int a, double start, double end, double increment, int m);	/*test adding matrices*/
+int test(int a, double start, double end, double increment, double m);	/*test adding matrices*/
 
 /*print.c functions*/
 int array (const cs * A); 			/*prints three arrays of matrix*/

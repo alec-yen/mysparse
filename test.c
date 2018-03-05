@@ -22,19 +22,115 @@ char* name (int rows, double sparsity, int seed)
 
 
 /* operation = 0 to create, 1 to add same matrix, 2 to add diff matrix */
-/* ./main <operation> <start spars> <end spars> <increment> <number of rows/columns> */
+/* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
 
-int test(int a, double start, double end, double increment, int m)
+int test(int a, double start, double end, double increment, double s)
 {
 
-if ( ((a!=0)&&(a!=1)&&(a!=2)) ) { printf ("ERROR: invalid operation %d\n",a); return -1; }
-if ( (start>=1) || (end>=1) || (increment>=1) ) { printf ("ERROR: invalid start/end/increment\n"); return -1; }
+int m=0,n=0;
+double spars=0;
 
-int n = m;
-int seed = 2; int seed2 = 3;
-int repeat = 1; //CHANGE ME
+if ( (a!=0)&&(a!=1)&&(a!=2)&&(a!=10)&&(a!=11) ) { printf ("ERROR: invalid operation %d\n",a); return -1; }
 
-/*GENERATE MATRIX*/
+if ( (a==0) || (a==1) || (a==2) )
+{
+	m = s;
+	n = s;
+	if ( (start>=1) || (end>=1) || (increment>=1) )
+	{ printf ("ERROR: invalid start/end/increment\n"); return -1; }
+}
+if ( (a==10) || (a==11) )
+{
+	spars = s;
+	if ( (start<10) || (end>25000) || (increment<10) )
+	{ printf ("ERROR: invalid start/end/increment\n"); return -1; }
+}
+
+int seed = 2;
+int seed2 = 3;
+int repeat = 300; //CHANGE ME
+
+
+
+
+
+/*GENERATE MATRIX FILES BY SIZE*/
+if (a==10)
+{
+	double i;
+	char* fname;
+	printf ("CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed,start,end);
+	for (i=start; i<end+increment; i+=increment)
+	{
+		fname = name (i,spars,seed);
+		frandmat (fname,i,i,spars,seed);
+		printf ("%s\n",fname);
+		free (fname);
+	}
+	return 0;
+}
+
+/*ADDING MATRICES NO DIFF INDEX BY SIZE*/
+else if (a==11)
+{
+	FILE *fp, *ft;
+	cs *T, *A = NULL, *B = NULL;
+	int j,k;
+	clock_t t1 = clock(), t2 = clock();
+	double ttaken1, ttaken2, tsum1, tsum2, i;
+	char* fname;
+
+	ft = fopen ("time.txt","a");
+	fprintf (ft, "\nTEST: spars: %.3f, seed: %d, trials: %d, size: %.0f to %.0f\n",spars,seed,repeat,start,end);
+	printf ("TEST: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed,start,end);
+
+	for (i=start; i<end+increment; i+=increment)
+	{
+		fname = name (i,spars,seed);
+		if ((fp = fopen (fname, "r")))
+		{
+			T = cs_load (fp);
+			A = cs_compress (T);
+			cs_spfree (T); fclose (fp); free (fname);
+			tsum1=0; tsum2=0;
+
+			for (j=0; j<repeat; j++)
+			{
+				t2 = clock();
+				B = cs_add (A,A,1,1);
+				t2 = clock() - t2;
+				t1 = clock();
+				if (!(a_diff(A,A))) nd_add(A,A);
+				t1 = clock() - t1;
+				ttaken1 = ((double)t1)/CLOCKS_PER_SEC;
+				ttaken2 = ((double)t2)/CLOCKS_PER_SEC;
+				tsum1 += ttaken1; tsum2 += ttaken2;
+
+				for (k=0;k<A->nzmax;k++) A->x[k] = 1;
+				cs_spfree (B); B = NULL;
+			}
+
+			printf ("%5.0f %f %f\n",i,tsum1/repeat, tsum2/repeat);
+			fprintf (ft, "%.0f %f %f\n",i,tsum1/repeat, tsum2/repeat);
+			if (A != NULL) { cs_spfree (A); A = NULL; }
+			if (B != NULL) { cs_spfree (B); B = NULL; }
+		}
+		else
+		{
+			printf ("ERROR: file %s does not exist\n",fname);
+			if (A != NULL) cs_spfree (A);
+			if (B != NULL) cs_spfree (B);
+			fclose (ft);
+			free (fname);
+			return -1;	
+		}
+	}
+	fclose (ft);
+	return 0;	
+}
+
+
+/*GENERATE MATRIX FILES BY SPARSITY*/
 if (!a)
 {
 	double i;
@@ -50,7 +146,7 @@ if (!a)
 	return 0;
 }
 
-/*COMPARISON OF ADDING METHODS*/
+/*ADDING MATRICES NO DIFF INDEX BY SPARSITY*/
 else if (a == 1)
 {
 	FILE *fp, *ft;
@@ -110,14 +206,8 @@ else if (a == 1)
 	return 0;
 }
 
-/*old test for validity of sum matrix*/
-/*				int succ = 1;
-				for (k=0;k<A->nzmax;k++) { if (A->x[k] != 2) succ = 0; }
-				for (k=0;k<B->nzmax;k++) { if (B->x[k] != 2) succ = 0; }
-				if (!succ) printf ("FAILED\n");
-*/
 
-/*COMPARISON OF ADDING DIFFERENT SHAPES*/
+/*ADDING MATRICES OF DIFF INDEX BY SPARSITY*/
 else if (a==2)
 {
 	FILE *fp1, *fp2, *ft;
