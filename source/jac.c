@@ -3,7 +3,7 @@
 int NUM_JAC = 8;
 
 /*returns filled compressed or triplet matrix*/
-cs* fcreate (int m, int n, int* i, int* j, double* x, int size, int trip)
+cs* create (int m, int n, int* i, int* j, double* x, int size, int trip)
 {
 	int k;
 	cs* A = cs_spalloc (m,n,m*n,1,1);
@@ -17,8 +17,7 @@ cs* fcreate (int m, int n, int* i, int* j, double* x, int size, int trip)
 	else return A;
 }
 
-/*allocates array of pointers to jacobian csc matrices*/
-//FIX ME: can be adjusted if Fx,Fy,etc. have different sizes
+/*allocates array of pointers to jac structs*/
 jac** alloc_jac (int m, int n)
 {
 	jac** jac_stor = malloc (NUM_JAC*sizeof(jac*));
@@ -26,13 +25,13 @@ jac** alloc_jac (int m, int n)
 	{
 		jac_stor[i] = malloc (sizeof(jac));
 		jac_stor[i]->jac_matrix = NULL;
-		jac_stor[i]->m = m;
+		jac_stor[i]->m = m; //FIX ME: can be adjusted if Fx,Fy,etc. have different sizes
 		jac_stor[i]->n = n;
 	}
 	return jac_stor;
 }
 
-/*frees array of pointers to jacobian matrices*/
+/*frees array of pointers to jac structs*/
 int free_jac (jac** jac_stor)
 {
 	for (int i=0;i<NUM_JAC;i++)
@@ -44,7 +43,7 @@ int free_jac (jac** jac_stor)
 	return 0;
 }
 
-/*frees original pointer A and reassigns jac_stor[s]*/
+/*frees original pointer A and reassigns jac_matrix*/
 int reassign_jac (jac** jac_stor, jac_name s, cs* A)
 {
 	cs* temp = jac_stor[s]->jac_matrix;
@@ -53,10 +52,10 @@ int reassign_jac (jac** jac_stor, jac_name s, cs* A)
 	return 0;
 }
 
-/*returns jacobian matrix given jac_name*/
+/*returns jac_matrix given jac_name*/
 cs* acc_jac (jac** jac_stor, jac_name s)
 {
-	printf ("accessing ");
+	printf ("accessing "); //FIX ME: printout for testing
 	switch (s)
 	{
 		case Fx: printf ("Fx"); break;
@@ -73,12 +72,12 @@ cs* acc_jac (jac** jac_stor, jac_name s)
 }
 
 
-/*adds values to jacobian matrix*/
+/*adds values to jac_matrix*/
 int add_jac (jac** jac_stor, jac_name s, int* i, int* j, double* x, int size)
 {
 	int diff = 0; /*assume no diff index at first*/
 	cs *C, *B, *A = acc_jac (jac_stor,s);
-	B = fcreate (jac_stor[s]->m,jac_stor[s]->n,i,j,x,size,0);
+	B = create (jac_stor[s]->m,jac_stor[s]->n,i,j,x,size,0);
 
 	if (A==NULL) reassign_jac (jac_stor,s,B);
 	else
@@ -90,12 +89,12 @@ int add_jac (jac** jac_stor, jac_name s, int* i, int* j, double* x, int size)
 	return 0;
 }
 
-/*sets values of jacobian matrix*/
+/*sets values of jac_matrix*/
 int set_jac (jac** jac_stor, jac_name s, int* i, int* j, double* x, int size)
 {
 	int diff = 0; /*assume no diff index at first*/
 	cs *C, *B, *A = acc_jac (jac_stor,s);
-	B = fcreate (jac_stor[s]->m,jac_stor[s]->n,i,j,x,size,0);
+	B = create (jac_stor[s]->m,jac_stor[s]->n,i,j,x,size,0);
 
 	if (A==NULL) reassign_jac (jac_stor,s,B);
 	else

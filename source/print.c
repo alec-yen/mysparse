@@ -22,7 +22,7 @@ double acc(const cs *A, int i, int j)
 /*print the three arrays of compressed sparse column format*/
 int array (const cs *A)
 {
-	if (A==NULL) return 1; /*return 1 if invalid*/
+	if (A==NULL) return 1;
 
 	int m,n,nz,nzmax, *i, *p, k;
 	double *x;
@@ -53,32 +53,28 @@ int array (const cs *A)
 	return 0;
 }
 
-/*prints compressed matrix onto screen*/
+/*prints compressed matrix*/
 int print (const cs *A)
 {
-	if (A==NULL) return 1; /*return 1 if invalid*/
+	if (A==NULL) return 1;
 	int r,c,m,n,nz;
-	m = A->m; n = A->n;
-	double test;
-	if (A->nz == -1){
+	if (A->nz == -1)
+	{
 		nz = A->nzmax;
 		printf ("%d-by-%d Compressed Matrix of %d Elements\n",m,n,nz);
-		for (r=0; r<m; r++){
-			for (c=0; c<n; c++){
-				test = acc (A,r,c);
-				printf ("%.0f\t", test);
-			}
+		for (r=0; r<A->m; r++)
+		{
+			for (c=0; c<A->n; c++) printf ("%.0f\t", acc (A,r,c));
 			printf ("\n");
 		}
 	}
-	else if (A->nz >= 0){
+	else if (A->nz >= 0)
+	{
 		nz = A->nz;
 		printf ("%d-by-%d Triplet Matrix of %d Elements\n",m,n,nz);
-		for (r=0; r<m; r++){
-			for (c=0; c<n; c++){
-				test = acc (A,r,c);
-				printf ("%.0f\t",test);
-			}
+		for (r=0; r<A->m; r++)
+		{
+			for (c=0; c<A->n; c++) printf ("%.0f\t",acc(A,r,c));
 			printf ("\n");
 		}
 	}

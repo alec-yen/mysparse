@@ -3,7 +3,7 @@
 #include <time.h>
 #include <string.h>
 
-/*create random matrix file name*/
+/*create matrix file name*/
 char* name (int rows, double sparsity, int seed)
 {
 	char buffer_rows[10];
@@ -20,7 +20,7 @@ char* name (int rows, double sparsity, int seed)
 	return fname;
 }
 
-
+/* testing function*/
 /* by spars: operation = 0 to create, 1 to add same matrix, 2 to add diff matrix */
 /* by size: operation = 10 to create by size, 11 to add same matrix*/
 /* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */

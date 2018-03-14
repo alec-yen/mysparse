@@ -3,6 +3,7 @@
 int main(int argc, char ** argv)
 {
 
+/*add.c and set.c runtime testing*/
 	/* by spars: operation = 0 to create, 1 to add same matrix, 2 to add diff matrix */
 	/* by size: operation = 10 to create by size, 11 to add same matrix*/
 	/* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
@@ -30,31 +31,19 @@ int main(int argc, char ** argv)
 	jac** jac_stor = alloc_jac (m,n);
 	add_jac (jac_stor,Fx,r1,c1,v1,size1);
 	print (acc_jac(jac_stor,Fx));
+
 	add_jac (jac_stor,Gx,r1,c1,v1,size1);
 	set_jac (jac_stor,Gx,r2,c2,v2,size2);
 	print (acc_jac(jac_stor,Gx));
+
+	add_jac (jac_stor,Gy,r1,c1,v1,size1);
 	add_jac (jac_stor,Gy,r1,c1,v1,size1);
 	print (acc_jac(jac_stor,Gy));
-	add_jac (jac_stor,Gy,r1,c1,v1,size1);
-	print (acc_jac(jac_stor,Gy));
+
 	add_jac (jac_stor,Fx0,r2,c2,v2,size2);
 	set_jac (jac_stor,Fx0,r1,c1,v1,size1);
 	print (acc_jac(jac_stor,Fx0));
+
 	free_jac (jac_stor);
-
-
-/*add and set functions testing*/
-/*	cs* A = fcreate (m,n,r1,c1,v1,size1,0);
-	cs* B = fcreate (m,n,r2,c2,v2,size2,0);
-	print (A);	
-	print (B);
-
-	A = set2 (A,B);
-	print (A);
-
-	cs_spfree (A);
-	cs_spfree (B);
-*/
-
 	return 0;
 }
