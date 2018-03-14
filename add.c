@@ -1,7 +1,7 @@
 #include "mysparse.h"
 
 /*returns 0 if no diff indices, 1 if all/some diff*/
-int a_diff (cs *A, cs *B)
+int diff_a (cs *A, cs *B)
 {
 	int j,p,i,mark;
 	int m = A->m;
@@ -72,7 +72,7 @@ int nd_add (cs *A, cs *B)
 cs* add(cs* A, cs* B, int *flag)
 {
 	cs* C;
-	if (!a_diff (A,B)) { nd_add (A,B); return A; }
+	if (!diff_a (A,B)) { nd_add (A,B); return A; }
 	else { C = cs_add (A,B,1,1); *flag = 1; return C; }
 }
 
@@ -81,7 +81,7 @@ cs* add(cs* A, cs* B, int *flag)
 cs* add2(cs* A, cs* B)
 {
 	cs* C;
-	if (!a_diff (A,B)) { nd_add (A,B); return A; }
+	if (!diff_a (A,B)) { nd_add (A,B); return A; }
 	else { C = cs_add (A,B,1,1); cs_spfree(A); return C; }
 }
 

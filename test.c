@@ -21,7 +21,8 @@ char* name (int rows, double sparsity, int seed)
 }
 
 
-/* operation = 0 to create, 1 to add same matrix, 2 to add diff matrix */
+/* by spars: operation = 0 to create, 1 to add same matrix, 2 to add diff matrix */
+/* by size: operation = 10 to create by size, 11 to add same matrix*/
 /* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
 
 int test(int a, double start, double end, double increment, double s)
@@ -81,7 +82,8 @@ else if (a==11)
 	char* fname;
 
 	ft = fopen ("time.txt","a");
-	fprintf (ft, "\nTEST: spars: %.3f, seed: %d, trials: %d, size: %.0f to %.0f\n",spars,seed,repeat,start,end);
+//	fprintf (ft, "\nTEST: spars: %.3f, seed: %d, trials: %d, size: %.0f to %.0f\n",spars,seed,repeat,start,end);
+	fprintf (ft, "%.3f\nsize id_add cs_add\n",spars);
 	printf ("TEST: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed,start,end);
 
 	for (i=start; i<end+increment; i+=increment)
@@ -100,7 +102,7 @@ else if (a==11)
 				B = cs_add (A,A,1,1);
 				t2 = clock() - t2;
 				t1 = clock();
-				if (!(a_diff(A,A))) nd_add(A,A);
+				if (!(diff_a(A,A))) nd_add(A,A);
 				t1 = clock() - t1;
 				ttaken1 = ((double)t1)/CLOCKS_PER_SEC;
 				ttaken2 = ((double)t2)/CLOCKS_PER_SEC;
@@ -157,7 +159,8 @@ else if (a == 1)
 	char* fname;
 
 	ft = fopen ("time.txt","a");
-	fprintf (ft, "\nTEST: %dx%d, seed: %d, trials: %d, sparse: %.3f to %.3f\n",m,n,seed,repeat,start,end);
+//	fprintf (ft, "\nTEST: %dx%d, seed: %d, trials: %d, sparse: %.3f to %.3f\n",m,n,seed,repeat,start,end);
+	fprintf (ft, "%d\nsparsity id_add cs_add\n",m);
 	printf ("TEST: matrix: %dx%d, seed: %d, trials: %d, sparse: %.3f to %.3f\n",m,n,seed,repeat,start,end);
 
 	for (i=start; i<end+increment; i+=increment)
@@ -177,7 +180,7 @@ else if (a == 1)
 				B = cs_add (A,A,1,1);
 				t2 = clock() - t2;
 				t1 = clock();
-				if (!(a_diff(A,A))) nd_add(A,A);
+				if (!(diff_a(A,A))) nd_add(A,A);
 				t1 = clock() - t1;
 				ttaken1 = ((double)t1)/CLOCKS_PER_SEC;
 				ttaken2 = ((double)t2)/CLOCKS_PER_SEC;
@@ -244,7 +247,7 @@ else if (a==2)
 				t2 = clock() - t2;
 				cs_spfree (C); C = NULL;
 				t1 = clock();
-				if (!(a_diff(A,B)))
+				if (!(diff_a(A,B)))
 				{
 					nd_add(A,B);
 					printf("ERROR: matrices should not be same\n");

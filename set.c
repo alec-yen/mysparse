@@ -13,7 +13,7 @@ int set_one (cs * A, int i, int j, double v)
 }
 
 /*returns 0 if no diff indices, 1 if all diff, 2 if some diff*/
-int s_diff (cs* A, cs* B, bool* nd)
+int diff_s (cs* A, cs* B, bool* nd)
 {
 	int j,p,i,mark,k=0;
 	int flag=-1;
@@ -89,7 +89,7 @@ cs* set (cs* A, cs* B, int* flag)
 {
 	cs * C = NULL;
 	bool* nd = calloc (B->nzmax, sizeof(bool));
-	int f = s_diff (A,B,nd);
+	int f = diff_s (A,B,nd);
 	if (!f)
 	{
 		nd_set (A,B);
@@ -107,7 +107,7 @@ cs* set2 (cs* A, cs* B)
 {
 	cs * C = NULL;
 	bool* nd = calloc (B->nzmax, sizeof(bool));
-	int f = s_diff (A,B,nd);
+	int f = diff_s (A,B,nd);
 	if (!f)
 	{
 		printf ("no diff index\n");

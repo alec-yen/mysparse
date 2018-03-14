@@ -4,7 +4,7 @@ CF = -O -g -Wall
 I = -I../repos/SuiteSparse/CXSparse/Include -I../repos/SuiteSparse/SuiteSparse_config
 
 CS = ../repos/SuiteSparse/CXSparse/Lib/libcxsparse.a
-CH = main.o add.o create.o jac.o print.o randmat.o set.o test.o
+CH = main.o add.o jac.o print.o randmat.o set.o test.o
 
 all:  main
 
@@ -16,9 +16,6 @@ main.o: main.c mysparse.h
 
 add.o: add.c mysparse.h
 	$(CC) $(CF) $(I) -c add.c
-
-create.o: create.c mysparse.h
-	$(CC) $(CF) $(I) -c create.c
 
 jac.o: $(CS) jac.c mysparse.h
 	$(CC) $(CF) $(I) -c jac.c
