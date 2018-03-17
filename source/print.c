@@ -57,11 +57,11 @@ int array (const cs *A)
 int print (const cs *A)
 {
 	if (A==NULL) return 1;
-	int r,c,m,n,nz;
+	int r,c,nz;
 	if (A->nz == -1)
 	{
 		nz = A->nzmax;
-		printf ("%d-by-%d Compressed Matrix of %d Elements\n",m,n,nz);
+		printf ("%d-by-%d Compressed Matrix of %d Elements\n",A->m,A->n,nz);
 		for (r=0; r<A->m; r++)
 		{
 			for (c=0; c<A->n; c++) printf ("%.0f\t", acc (A,r,c));
@@ -71,7 +71,7 @@ int print (const cs *A)
 	else if (A->nz >= 0)
 	{
 		nz = A->nz;
-		printf ("%d-by-%d Triplet Matrix of %d Elements\n",m,n,nz);
+		printf ("%d-by-%d Triplet Matrix of %d Elements\n",A->m,A->n,nz);
 		for (r=0; r<A->m; r++)
 		{
 			for (c=0; c<A->n; c++) printf ("%.0f\t",acc(A,r,c));

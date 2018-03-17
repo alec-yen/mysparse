@@ -1,4 +1,5 @@
 #include "cs.h"
+#include <stdbool.h>
 
 typedef enum 	{ Fx,Fy,Gx,Gy,Fx0,Fy0,Gx0,Gy0} jac_name;	/*names of Jacobian matrices*/
 typedef struct { cs* jac_matrix; int m; int n; } jac;		/*Jacobian struct*/
@@ -20,9 +21,10 @@ cs* set  (cs * A, cs * B, int * flag);		/*sets matrices, sets flag=1 if requires
 
 
 /*randmat.c + test.c functions*/
-cs* randmat(int m, int n, double sparsity, int seed);			/*create random matrix*/
-int frandmat(char* f, int m, int n, double sparsity, int seed);		/*write random matrix to file*/
-int test(int a, double start, double end, double increment, double m);	/*test adding matrices*/
+cs* randmat(int m, int n, double sparsity, int seed);				/*create random matrix*/
+int frandmat(char* f, int m, int n, double sparsity, int seed, int val);	/*write random matrix to file*/
+int test_add(int a, double start, double end, double increment, double m);	/*test adding matrices*/
+int test_set(int a, double start, double end, double increment, double m);	/*test adding matrices*/
 
 /*print.c functions*/
 int array (const cs * A); 			/*prints three 1D arrays of matrix*/
@@ -34,5 +36,8 @@ cs* add2 (cs * A, cs * B);					/*same as add w/o diff param*/
 cs* set2 (cs * A, cs * B);					/*same as set w/o diff param*/
 int nd_add (cs *A, cs *B);					/*adds matrices if no diff index*/
 int diff_a (cs * A, cs * B);					/*returns 1 if diff index, 0 otherwise*/
+int nd_set (cs* A, cs* B);
+cs* sd_set (cs* A, cs* B, bool* nd);
+int diff_s (cs* A, cs* B, bool* nd);
 cs* acc_jac (jac ** jac_stor, jac_name s);			/*returns jac Fx,Fy,etc.*/
 

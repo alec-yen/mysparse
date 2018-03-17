@@ -1,5 +1,4 @@
 #include "mysparse.h"
-#include <stdbool.h>
 
 /*set one element*/
 int set_one (cs * A, int i, int j, double v)

@@ -1,7 +1,7 @@
 #include "mysparse.h"
 
 /*write random matrix to file*/
-int frandmat(char* f, int m, int n, double sparsity, int seed)
+int frandmat(char* f, int m, int n, double sparsity, int seed, int val)
 {
 	FILE* fp = fopen( f , "w");	
 	int i,j;
@@ -13,10 +13,10 @@ int frandmat(char* f, int m, int n, double sparsity, int seed)
 		for (j=0; j<n-1; j++)
 		{
 			if ( ( ((double)rand()/(double)RAND_MAX) < sparsity ) && (T->nz < nz-1) )
-			cs_entry (T,i,j,1);
+			cs_entry (T,i,j,val);
 		}
 	}
-	cs_entry (T,m-1,n-1,1); /*ensure size of m rows and n columns*/
+	cs_entry (T,m-1,n-1,val); /*ensure size of m rows and n columns*/
 	for (i=0; i<T->nz; i++)
 	{
 		fprintf (fp, "%d %d %.2f\n", T->i[i], T->p[i], T->x[i]);

@@ -8,17 +8,17 @@ int main(int argc, char ** argv)
 	/* by size: operation = 10 to create by size, 11 to add same matrix*/
 	/* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
 
-/*	if (argc != 6) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
+	if (argc != 6) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
 	int a = atoi (argv[1]);
 	double start = atof(argv[2]);
 	double end = atof(argv[3]);
 	double increment = atof(argv[4]);
 	double m = atof (argv[5]);
-	test (a,start,end,increment,m);
-*/
+//	test_add (a,start,end,increment,m);
+	test_set (a,start,end,increment,m);
 
 /*jac.c functions testing*/
-	int r1[] =    {3, 0,3,2,1, 0,2,4, 1,5, 1,2,4, 0,5};
+/*	int r1[] =    {3, 0,3,2,1, 0,2,4, 1,5, 1,2,4, 0,5};
 	int c1[] =    {4, 4,0,0,0, 1,1,1, 3,3, 4,5,5, 6,6};
 	double v1[] = {11,2,4,7,10,1,8,12,5,14,6,9,13,3,15};
 	int size1 = sizeof(r1)/sizeof(r1[0]);
@@ -45,5 +45,5 @@ int main(int argc, char ** argv)
 	print (acc_jac(jac_stor,Fx0));
 
 	free_jac (jac_stor);
-	return 0;
+*/	return 0;
 }

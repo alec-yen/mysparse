@@ -12,20 +12,20 @@ char* name (int rows, double sparsity, int seed)
 	int len = sprintf (buffer_rows,"%05d",rows);
 	len += sprintf (buffer_spars,"%.3f",sparsity);
 	len += sprintf (buffer_seed,"%02d",seed);
-	char* fname = malloc (len+15);
-	strcpy (fname, "data/m");
+	char* fname = malloc (len+25);
+	strcpy (fname, "data/add_");
 	strcat (fname, buffer_rows); strcat (fname, "_");
 	strcat (fname, buffer_seed); strcat (fname, "_");
 	strcat (fname, buffer_spars); strcat (fname, ".txt");
 	return fname;
 }
 
-/* testing function*/
+/* testing function for add function runtime*/
 /* by spars: operation = 0 to create, 1 to add same matrix, 2 to add diff matrix */
 /* by size: operation = 10 to create by size, 11 to add same matrix*/
 /* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
 
-int test(int a, double start, double end, double increment, double s)
+int test_add(int a, double start, double end, double increment, double s)
 {
 
 int m=0,n=0;
@@ -47,7 +47,7 @@ if ( (a==10) || (a==11) )
 	{ printf ("ERROR: invalid start/end/increment\n"); return -1; }
 }
 
-int seed = 2;
+int seed1 = 2;
 int seed2 = 3;
 int repeat = 300; //CHANGE ME
 
@@ -60,11 +60,11 @@ if (a==10)
 {
 	double i;
 	char* fname;
-	printf ("CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed,start,end);
+	printf ("ND_ADD CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
 	for (i=start; i<end+increment; i+=increment)
 	{
-		fname = name (i,spars,seed);
-		frandmat (fname,i,i,spars,seed);
+		fname = name (i,spars,seed1);
+		frandmat (fname,i,i,spars,seed1,1);
 		printf ("%s\n",fname);
 		free (fname);
 	}
@@ -81,14 +81,13 @@ else if (a==11)
 	double ttaken1, ttaken2, tsum1, tsum2, i;
 	char* fname;
 
-	ft = fopen ("time.txt","a");
-//	fprintf (ft, "\nTEST: spars: %.3f, seed: %d, trials: %d, size: %.0f to %.0f\n",spars,seed,repeat,start,end);
+	ft = fopen ("time_add.txt","a");
 	fprintf (ft, "%.3f\nsize id_add cs_add\n",spars);
-	printf ("TEST: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed,start,end);
+	printf ("ND_ADD TEST: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
 
 	for (i=start; i<end+increment; i+=increment)
 	{
-		fname = name (i,spars,seed);
+		fname = name (i,spars,seed1);
 		if ((fp = fopen (fname, "r")))
 		{
 			T = cs_load (fp);
@@ -137,11 +136,11 @@ if (!a)
 {
 	double i;
 	char* fname;
-	printf ("CREATE: matrix: %dx%d, seed: %d, sparse: %.3f to %.3f\n",m,n,seed,start,end);
+	printf ("ND_ADD CREATE: matrix: %dx%d, seed: %d, sparse: %.3f to %.3f\n",m,n,seed1,start,end);
 	for (i=start; i<end+increment; i+=increment)
 	{
-		fname = name (m,i,seed);
-		frandmat (fname,m,n,i,seed);
+		fname = name (m,i,seed1);
+		frandmat (fname,m,n,i,seed1,1);
 		printf ("%s\n",fname);
 		free (fname);
 	}
@@ -158,14 +157,13 @@ else if (a == 1)
 	double ttaken1, ttaken2, tsum1, tsum2, sparsity, i;
 	char* fname;
 
-	ft = fopen ("time.txt","a");
-//	fprintf (ft, "\nTEST: %dx%d, seed: %d, trials: %d, sparse: %.3f to %.3f\n",m,n,seed,repeat,start,end);
+	ft = fopen ("time_add.txt","a");
 	fprintf (ft, "%d\nsparsity id_add cs_add\n",m);
-	printf ("TEST: matrix: %dx%d, seed: %d, trials: %d, sparse: %.3f to %.3f\n",m,n,seed,repeat,start,end);
+	printf ("ND_ADD TEST: matrix: %dx%d, seed: %d, trials: %d, sparse: %.3f to %.3f\n",m,n,seed1,repeat,start,end);
 
 	for (i=start; i<end+increment; i+=increment)
 	{
-		fname = name (m,i,seed);	
+		fname = name (m,i,seed1);	
 		if ((fp = fopen (fname, "r")))
 		{
 			T = cs_load (fp);
@@ -220,15 +218,15 @@ else if (a==2)
 	double ttaken1, ttaken2, tsum1, tsum2, sparsity1, sparsity2, i;
 	char *fname1, *fname2;
 
-	ft = fopen ("time.txt","a");
+	ft = fopen ("time_add.txt","a");
 	fprintf (ft, "\nTEST: %dx%d, seeds: %d/%d, trials: %d, sparse: %.3f to %.3f\n",
-		m,n,seed,seed2,repeat,start,end);
-	printf ("TEST: matrix: %dx%d, seeds: %d/%d, trials: %d, sparse: %.3f to %.3f\n",
-		m,n,seed,seed2,repeat,start,end);
+		m,n,seed1,seed2,repeat,start,end);
+	printf ("AD_ADD TEST: matrix: %dx%d, seeds: %d/%d, trials: %d, sparse: %.3f to %.3f\n",
+		m,n,seed1,seed2,repeat,start,end);
 
 	for (i=start; i<end+increment; i+=increment)
 	{
-		fname1 = name (m,i,seed);
+		fname1 = name (m,i,seed1);
 		fname2 = name (m,i,seed2);	
 		if ((fp1 = fopen (fname1, "r")) && (fp2 = fopen (fname2,"r")))
 		{
