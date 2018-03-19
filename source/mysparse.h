@@ -35,9 +35,10 @@ int print (const cs * A); 			/*prints matrix in readable form*/
 cs* add2 (cs * A, cs * B);					/*same as add w/o diff param*/
 cs* set2 (cs * A, cs * B);					/*same as set w/o diff param*/
 int nd_add (cs *A, cs *B);					/*adds matrices if no diff index*/
-int diff_a (cs * A, cs * B);					/*returns 1 if diff index, 0 otherwise*/
-int nd_set (cs* A, cs* B);
-cs* sd_set (cs* A, cs* B, bool* nd);
-int diff_s (cs* A, cs* B, bool* nd);
+int diff_a (cs * A, cs * B);					/*returns 1 if some/all diff index, 0 otherwise*/
+int nd_set (cs* A, cs* B);					/*sets matrices if no diff index*/
+cs* sd_set (cs* A, cs* B, bool* nd);				/*sets matrices if some diff index*/
+int diff_s (cs* A, cs* B, bool* nd);				/*returns 2 if some diff, 1 if all diff, 0 otherwise*/
 cs* acc_jac (jac ** jac_stor, jac_name s);			/*returns jac Fx,Fy,etc.*/
+void free_all (cs* A, cs* B, cs* C, char* fname_print, char* fname_other, FILE* fp, FILE* ft, bool bad);
 
