@@ -21,8 +21,8 @@ char* aname (int rows, double sparsity, int seed)
 }
 
 /* testing function for add function runtime*/
-/* by spars: operation = 0 to create, 1 to add no diff matrix, 2 to add some diff matrix */
-/* by size: operation = 10 to create by size, 11 to add same matrix*/
+/* by spars: operation = 0 to create no diff, 1 to add no diff matrix, 2 to add some diff matrix */
+/* by size: operation = 10 to create no diff, 11 to add no diff matrix*/
 /* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
 
 int test_add(int a, double start, double end, double increment, double s)
@@ -42,7 +42,7 @@ if ( (a==0) || (a==1) || (a==2) )
 else if ( (a==10) || (a==11) )
 {
 	spars = s;
-	if ( (start<10) || (end>25000) || (increment<10) ) { printf ("ERROR: invalid start/end/increment\n"); return -1; }
+	if ( (start<10) || (end>30000) || (increment<10) ) { printf ("ERROR: invalid start/end/increment\n"); return -1; }
 
 }
 
@@ -55,7 +55,8 @@ if (a==0)
 }
 else if (a==10)
 {
-	//check = WILL FIGURE OUT LATER
+	check = 0;
+	for (int i=start; i<end+increment; i+=increment) check += 2*16*spars*i*i/1000000;
 	printf ("Will take about %.2f MB total. Continue? (y/n) ",check);
 	if (scanf ("%c",&confirm)) {};
 	if (confirm=='n') return 0;
@@ -95,7 +96,7 @@ else if (a==11)
 {
 	ft = fopen ("time_add.txt","a");
 	fprintf (ft, "%.3f\nsize id_add cs_add\n",spars);
-	printf ("ND_ADD TEST: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
+	printf ("ND_ADD TEST: spars: %.3f, seed: %d, trials: %d, size: %.0f to %.0f\n",spars,seed1,repeat,start,end);
 
 	for (i=start; i<end+increment; i+=increment)
 	{

@@ -71,6 +71,20 @@ cs* acc_jac (jac** jac_stor, jac_name s)
 	return jac_stor[s]->jac_matrix;
 }
 
+/*increase size of jac_matrix to m rows and n columns*/
+int inc_jac (jac** jac_stor, jac_name s, int m, int n)
+{
+	cs *A = acc_jac (jac_stor,s);
+	if ((m < A->m) || (n < A->n)) return 1;
+	if ((m == A->m) && (n == A->n)) return 1;
+	A->p = realloc (A->p,(n+1)*sizeof(int));
+	for (int i=A->n+1; i<n+1; i++) A->p[i] = 0;
+	A->m = m;
+	A->n = n;
+	jac_stor[s]->m = m;
+	jac_stor[s]->n = n;
+	return 0;
+}
 
 /*adds values to jac_matrix*/
 int add_jac (jac** jac_stor, jac_name s, int* i, int* j, double* x, int size)

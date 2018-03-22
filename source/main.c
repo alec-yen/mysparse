@@ -3,10 +3,17 @@
 int main(int argc, char ** argv)
 {
 
-/*add.c and set.c runtime testing*/
-	/* by spars: operation = 0 to create, 1 to add same matrix, 2 to add diff matrix */
-	/* by size: operation = 10 to create by size, 11 to add same matrix*/
 	/* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
+/*ADD.C*/
+	/* by spars: operation = 0 to create no diff, 1 to add no diff matrix, 2 to add some diff matrix */
+	/* by size: operation = 10 to create no diff, 11 to add no diff matrix*/
+
+/*SET.C*/
+	/* by spars: operation = 0 to create no diff, 1 to set no diff matrix
+				10 to create some diff, 11 to set some diff matrix */
+	/* by size: operation = 20 to create no diff, 21 to set no diff matrix
+				30 to create some diff, 31 to set some diff matrix */
+
 
 	if (argc != 6) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
 	int a = atoi (argv[1]);
@@ -16,6 +23,7 @@ int main(int argc, char ** argv)
 	double m = atof (argv[5]);
 //	test_add (a,start,end,increment,m);
 	test_set (a,start,end,increment,m);
+
 
 /*jac.c functions testing*/
 /*	int r1[] =    {3, 0,3,2,1, 0,2,4, 1,5, 1,2,4, 0,5};
@@ -30,7 +38,9 @@ int main(int argc, char ** argv)
 
 	jac** jac_stor = alloc_jac (m,n);
 	add_jac (jac_stor,Fx,r1,c1,v1,size1);
-	print (acc_jac(jac_stor,Fx));
+	array (acc_jac(jac_stor,Fx));
+	if (!(inc_jac (jac_stor,Fx,7,8))) array (acc_jac(jac_stor,Fx));
+
 
 	add_jac (jac_stor,Gx,r1,c1,v1,size1);
 	set_jac (jac_stor,Gx,r2,c2,v2,size2);

@@ -50,7 +50,7 @@ int m=0,n=0;
 double spars=0;
 double check; char confirm;
 
-if ( (a!=0)&&(a!=1)&&(a!=10)&&(a!=11) ) { printf ("ERROR: invalid operation %d\n",a); return -1; }
+if ( (a!=0)&&(a!=1)&&(a!=10)&&(a!=11)&&(a!=20)&&(a!=21)&&(a!=30)&&(a!=31)) { printf ("ERROR: invalid operation %d\n",a); return -1; }
 
 if ( (a==0) || (a==1) || (a==10) || (a==11) )
 {
@@ -61,7 +61,7 @@ if ( (a==0) || (a==1) || (a==10) || (a==11) )
 else if ( (a==20) || (a==21) || (a==30) || (a==31) )
 {
 	spars = s;
-	if ( (start<10) || (end>25000) || (increment<10) ) { printf ("ERROR: invalid start/end/increment\n"); return -1; }
+	if ( (start<10) || (end>30000) || (increment<10) ) { printf ("ERROR: invalid start/end/increment\n"); return -1; }
 }
 
 if ( (a==0) || (a==10) )
@@ -73,8 +73,9 @@ if ( (a==0) || (a==10) )
 }
 else if ( (a==20) || (a==30) )
 {
-	//check = WILL FIGURE OUT LATER
-	printf ("Will take about %.2f MB total. Continue? (y/n) ",check);
+	check = 0;
+	for (int i=start; i<end+increment; i+=increment) check += 2*16*spars*i*i/1000000;
+	printf ("Will take about %.2f MB total. Continue? (y/n) ",2*check);
 	if (scanf ("%c",&confirm)) {};
 	if (confirm=='n') return 0;
 }
@@ -205,6 +206,65 @@ else if (a == 11)
 
 		printf ("%f %f\n",sparsity,tsum1/repeat);
 		fprintf (ft, "%f %f\n",sparsity,tsum1/repeat);
+		if (A != NULL) { cs_spfree (A); A = NULL; }
+		if (B != NULL) { cs_spfree (B); B = NULL; }
+		if (C != NULL) { cs_spfree (C); C = NULL; }
+	}
+	fclose (ft);
+	return 0;
+}
+
+/*GENERATE MATRIX FILES SOME DIFF BY SIZE*/
+else if (a == 30)
+{
+	printf ("SD_SET CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
+	for (i=start; i<end+increment; i+=increment)
+	{
+		fname1 = sname (i,spars,seed1,val1);
+		frandmat (fname1,i,i,spars,seed1,val1);
+		printf ("%s\n",fname1);
+		free (fname1);
+		fname2 = sname (i,spars,seed2,val2);
+		frandmat (fname2,i,i,spars,seed2,val2);
+		printf ("%s\n",fname2);
+		free (fname2);
+	}
+	return 0;
+}
+
+/*SETTING MATRICES SOME DIFF INDEX BY SIZE*/
+else if (a == 31)
+{
+	ft = fopen ("time_set.txt","a");
+	fprintf (ft, "%f\nsize sd_set\n",spars);
+	printf ("SD_SET TEST: spars: %.3f, seed: %d, trials: %d, size: %.0f to %.0f\n",spars,seed1,repeat,start,end);
+
+	for (i=start; i<end+increment; i+=increment)
+	{
+		fname1 = sname (i,spars,seed1,val1);
+		fname2 = sname (i,spars,seed2,val2);	
+		if (!(fp1 = fopen (fname1, "r"))) { free_all (A,B,C,fname1,fname2,NULL,ft,1); return -1; }
+		if (!(fp2 = fopen (fname2, "r"))) { free_all (A,B,C,fname2,fname1,fp1,ft,1); return -1; }
+
+		T = cs_load (fp1); A = cs_compress (T); cs_spfree (T);
+		T = cs_load (fp2); B = cs_compress (T); cs_spfree (T);
+
+		fclose (fp1); fclose (fp2); free (fname1); free (fname2);
+		tsum1=0;
+
+		for (j=0; j<repeat; j++)
+		{
+			t1 = clock();
+			nd = calloc (B->nzmax, sizeof(bool));
+			if (diff_s(A,B,nd) == 2) C = sd_set(A,B,nd);
+			free (nd);
+			t1 = clock() - t1;
+			tsum1 += ((double)t1)/CLOCKS_PER_SEC;
+			cs_spfree (C); C = NULL;
+		}
+
+		printf ("%.0f %f\n",i,tsum1/repeat);
+		fprintf (ft, "%.0f %f\n",i,tsum1/repeat);
 		if (A != NULL) { cs_spfree (A); A = NULL; }
 		if (B != NULL) { cs_spfree (B); B = NULL; }
 		if (C != NULL) { cs_spfree (C); C = NULL; }

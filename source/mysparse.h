@@ -10,6 +10,7 @@ int add_jac  	(jac ** jac_stor, jac_name s, 			/*adds r,c,v arrays to Jacobian m
 int set_jac  	(jac ** jac_stor, jac_name s,			/*sets r,c,v arrays to Jacobian matrix*/
 		int * r, int * c, double * v, int size);
 jac** alloc_jac	(int m, int n);					/*allocate array of pointers to jac structs*/
+int inc_jac (jac** jac_stor, jac_name s, int m, int n);		/*increase size of Jacobian matrix*/
 int free_jac 	(jac ** jac_stor);				/*free array of pointers to jac structs*/
 
 /*add.c + set.c public functions*/
