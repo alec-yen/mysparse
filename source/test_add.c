@@ -10,7 +10,7 @@ char* aname (int rows, double sparsity, int seed)
 	char buffer_spars[10];
 	char buffer_seed[10];
 	int len = sprintf (buffer_rows,"%05d",rows);
-	len += sprintf (buffer_spars,"%.3f",sparsity);
+	len += sprintf (buffer_spars,"%.4f",sparsity);
 	len += sprintf (buffer_seed,"%02d",seed);
 	char* fname = malloc (len+25);
 	strcpy (fname, "data/add_");
@@ -28,40 +28,35 @@ char* aname (int rows, double sparsity, int seed)
 int test_add(int a, double start, double end, double increment, double s)
 {
 
-int m=0,n=0;
-double spars=0;
-double check; char confirm;
+int m=0,n=0; double spars=0, check=0; char confirm;
 
+/*ERROR CHECKING*/
 if ( (a!=0)&&(a!=1)&&(a!=2)&&(a!=10)&&(a!=11) ) { printf ("ERROR: invalid operation %d\n",a); return -1; }
 
-if ( (a==0) || (a==1) || (a==2) )
+if (a<10)
 {
 	m = s; n = s;
-	if ( (start>=1) || (end>=1) || (increment>=1) ) { printf ("ERROR: invalid start/end/increment\n"); return -1; }
+	if ( (start>=1) || (end>=1) || (increment>=1) ) { printf ("ERROR: invalid param\n"); return -1; }
 }
-else if ( (a==10) || (a==11) )
+else
 {
 	spars = s;
-	if ( (start<10) || (end>30000) || (increment<10) ) { printf ("ERROR: invalid start/end/increment\n"); return -1; }
+	if ( (start<10) || (end>30000) || (increment<10) ) { printf ("ERROR: invalid param\n"); return -1; }
 
 }
 
-if (a==0)
+/*CALCULATE NEEDED MEMORY TO CREATE*/
+if (!(a%10))
 {
-	check = 16*m*n*(start+end)*(1000*(end-start)+1)/2000000;
+	for (double i=start; i<end+increment; i+=increment)
+	{
+		if (a==0) check += 16*i*m*n/2000000;
+		else if (a==10) check += 16*spars*i*i/2000000;
+	}
 	printf ("Will take about %.2f MB total. Continue? (y/n) ",check);
 	if (scanf ("%c",&confirm)) {};
 	if (confirm=='n') return 0;
 }
-else if (a==10)
-{
-	check = 0;
-	for (int i=start; i<end+increment; i+=increment) check += 2*16*spars*i*i/1000000;
-	printf ("Will take about %.2f MB total. Continue? (y/n) ",check);
-	if (scanf ("%c",&confirm)) {};
-	if (confirm=='n') return 0;
-}
-
 
 
 /*VARIABLES*/
