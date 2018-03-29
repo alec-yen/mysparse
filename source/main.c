@@ -3,7 +3,7 @@
 int main(int argc, char ** argv)
 {
 
-	/* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
+	/* ./main <add(0) or set(1)> <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
 /*ADD.C*/
 	/* by spars: operation = 0 to create no diff, 1 to add no diff matrix, 12 to add some diff matrix */
 	/* by size: operation = 10 to create no diff, 11 to add no diff matrix*/
@@ -14,21 +14,21 @@ int main(int argc, char ** argv)
 	/* by size: operation = 20 to create no diff, 21 to set no diff matrix
 				30 to create some diff, 31 to set some diff matrix */
 
-
-	if (argc != 6)
+	if (argc != 7)
 	{
 		printf ("ERROR: incorrect number of command line arguments\n");
-		printf ("ADD.C\n\tby spars: operation =\t0 to create no diff, 1 to add no diff matrix\n\t\t\t\t2 to add some diff matrix\n\tby size: operation =\t10 to create no diff, 11 to add no diff matrix\n\t\t\t\t12 to add some diff matrix\n\n");
-		printf ("SET.C\n\tby spars: operation =\t0 to create no diff, 1 to set no diff matrix\n\t\t\t\t10 to create some diff, 11 to set some diff matrix\n\tby size: operation =\t20 to create no diff, 21 to set no diff matrix\n\t\t\t\t30 to create some diff, 31 to set some diff matrix\n");
+		printf ("./main <add(0) or set(1)> <operation> <start size/spars> <end size/spars> <increment> <constant spars/size>\n");
+		printf ("\tby spars: operation =\t0 to create no diff\t1 to test no diff matrix\n\t\t\t\t10 to create some diff\t11 to test some diff matrix\n\tby size: operation =\t20 to create no diff\t21 to test no diff matrix\n\t\t\t\t30 to create some diff\t31 to test some diff matrix\n");
 		return -1;
 	}
-	int a = atoi (argv[1]);
-	double start = atof(argv[2]);
-	double end = atof(argv[3]);
-	double increment = atof(argv[4]);
-	double m = atof (argv[5]);
-//	test_add (a,start,end,increment,m);
-	test_set (a,start,end,increment,m);
+	int op = atoi (argv[1]);
+	int a = atoi (argv[2]);
+	double start = atof(argv[3]);
+	double end = atof(argv[4]);
+	double increment = atof(argv[5]);
+	double m = atof (argv[6]);
+	if (!op) test_add (a,start,end,increment,m);
+	else test_set (a,start,end,increment,m);
 
 
 /*jac.c functions testing*/

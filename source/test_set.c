@@ -42,7 +42,6 @@ void free_all (cs* A, cs* B, cs* C, char* fname_print, char* fname_other, FILE* 
 /* by size: operation = 20 to create no diff, 21 to set no diff matrix
 			30 to create some diff, 31 to set some diff matrix */
 /* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
-
 int test_set(int a, double start, double end, double increment, double s)
 {
 
@@ -67,8 +66,8 @@ else
 /*VARIABLES*/
 	int seed1 = 2, seed2 = 3;
 	int val1 = 1, val2 = 2;
-	int repeat = 600;
-	double frac = 0.1;
+	int repeat = 500; //how many trials
+	double frac = 0.1; //what fraction of values to be set
 
 	FILE *fp1, *fp2, *ft;
 	clock_t t1 = clock();
@@ -94,7 +93,7 @@ if (!(a%10))
 
 
 /*GENERATE MATRIX FILES NO DIFF BY SPARSITY*/
-if (!a)
+if (a==0)
 {
 	printf ("ND_SET CREATE: matrix: %dx%d, seed: %d, sparse: %.3f to %.3f\n",m,n,seed1,start,end);
 	for (i=start; i<end+increment; i+=increment)
@@ -268,7 +267,6 @@ else if (a == 21)
 	fclose (ft);
 	return 0;
 }
-
 
 /*GENERATE MATRIX FILES SOME DIFF BY SIZE*/
 else if (a == 30)
