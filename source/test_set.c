@@ -67,7 +67,7 @@ else
 /*VARIABLES*/
 	int seed1 = 2, seed2 = 3;
 	int val1 = 1, val2 = 2;
-	int repeat = 300;
+	int repeat = 600;
 	double frac = 0.1;
 
 	FILE *fp1, *fp2, *ft;

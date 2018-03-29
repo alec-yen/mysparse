@@ -15,8 +15,8 @@ char* aname (int rows, double sparsity, int seed)
 	char* fname = malloc (len+25);
 	strcpy (fname, "data/add_");
 	strcat (fname, buffer_rows); strcat (fname, "_");
-	strcat (fname, buffer_spars); strcat (fname, ".txt");
-	strcat (fname, buffer_seed); strcat (fname, "_");
+	strcat (fname, buffer_spars); strcat (fname, "_");
+	strcat (fname, buffer_seed); strcat (fname, ".txt");
 	return fname;
 }
 
@@ -31,7 +31,7 @@ int test_add(int a, double start, double end, double increment, double s)
 int m=0,n=0; double spars=0, check=0; char confirm;
 
 /*ERROR CHECKING*/
-if ( (a!=0)&&(a!=1)&&(a!=2)&&(a!=10)&&(a!=11) ) { printf ("ERROR: invalid operation %d\n",a); return -1; }
+if ( (a!=0)&&(a!=1)&&(a!=2)&&(a!=10)&&(a!=11)&&(a!=12) ) { printf ("ERROR: invalid operation %d\n",a); return -1; }
 
 if (a<10)
 {
@@ -50,8 +50,8 @@ if (!(a%10))
 {
 	for (double i=start; i<end+increment; i+=increment)
 	{
-		if (a==0) check += 16*i*m*n/2000000;
-		else if (a==10) check += 16*spars*i*i/2000000;
+		if (a==0) check += 16*i*m*n/1000000;
+		else if (a==10) check += 16*spars*i*i/1000000;
 	}
 	printf ("Will take about %.2f MB total. Continue? (y/n) ",check);
 	if (scanf ("%c",&confirm)) {};
@@ -126,6 +126,58 @@ else if (a==11)
 	fclose (ft);
 	return 0;	
 }
+
+/*ADDING MATRICES OF DIFF INDEX BY SIZE*/
+else if (a==12)
+{
+
+	ft = fopen ("time_add.txt","a");
+	fprintf (ft, "%.3f\nsize id_add cs_add\n",spars);
+	printf ("SD_ADD TEST: spars: %.3f, seeds: %d/%d, trials: %d, size: %.0f to %.0f\n",
+		spars,seed1,seed2,repeat,start,end);
+
+	for (i=start; i<end+increment; i+=increment)
+	{
+		fname1 = aname (i,spars,seed1);
+		fname2 = aname (i,spars,seed2);
+		if (!(fp1 = fopen (fname1, "r"))) { free_all (A,B,C,fname1,fname2,NULL,ft,1); return -1; }
+		if (!(fp2 = fopen (fname2, "r"))) { free_all (A,B,C,fname2,fname1,fp1,ft,1); return -1; }
+
+		T = cs_load (fp1); A = cs_compress (T); cs_spfree (T);
+		T = cs_load (fp2); B = cs_compress (T); cs_spfree (T);
+
+		fclose (fp1); fclose (fp2); free (fname1); free (fname2);
+		tsum1=0; tsum2=0;
+
+		for (j=0; j<repeat; j++)
+		{
+			t2 = clock();
+			C = cs_add (A,B,1,1);
+			t2 = clock() - t2;
+			cs_spfree (C); C = NULL;
+			t1 = clock();
+			if (!(diff_a(A,B)))
+			{
+				printf("ERROR: matrices should not be same\n");
+				free_all (A,B,C,fname1,fname2,fp1,ft,0); fclose (fp2); return -1;
+			}
+			else C = cs_add (A,B,1,1);
+			t1 = clock() - t1;
+			tsum1 += ((double)t1)/CLOCKS_PER_SEC;
+			tsum2 += ((double)t2)/CLOCKS_PER_SEC;
+			cs_spfree (C); C = NULL;
+		}
+		printf ("%5.0f %f %f\n",i, tsum1/repeat, tsum2/repeat);
+		fprintf (ft, "%.0f %f %f\n",i, tsum1/repeat, tsum2/repeat);
+		if (A != NULL) { cs_spfree (A); A = NULL; }
+		if (B != NULL) { cs_spfree (B); B = NULL; }
+		if (C != NULL) { cs_spfree (C); C = NULL; }
+	}
+	fclose (ft);
+	return 0;
+}
+
+
 
 
 /*GENERATE MATRIX FILES BY SPARSITY*/

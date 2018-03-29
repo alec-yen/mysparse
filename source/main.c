@@ -5,17 +5,23 @@ int main(int argc, char ** argv)
 
 	/* ./main <operation> <start size/spars> <end size/spars> <increment> <constant spars/size> */
 /*ADD.C*/
-	/* by spars: operation = 0 to create no diff, 1 to add no diff matrix, 2 to add some diff matrix */
+	/* by spars: operation = 0 to create no diff, 1 to add no diff matrix, 12 to add some diff matrix */
 	/* by size: operation = 10 to create no diff, 11 to add no diff matrix*/
 
 /*SET.C*/
-	/* by spars: operation = 0 to create no diff, 1 to set no diff matrix
+	/* by spars: operation = 0 to create no diff, 1 to set no diff matrix, 12 to add some diff matrix 
 				10 to create some diff, 11 to set some diff matrix */
 	/* by size: operation = 20 to create no diff, 21 to set no diff matrix
 				30 to create some diff, 31 to set some diff matrix */
 
 
-	if (argc != 6) { printf ("ERROR: incorrect number of command line arguments\n"); return -1; }
+	if (argc != 6)
+	{
+		printf ("ERROR: incorrect number of command line arguments\n");
+		printf ("ADD.C\n\tby spars: operation =\t0 to create no diff, 1 to add no diff matrix\n\t\t\t\t2 to add some diff matrix\n\tby size: operation =\t10 to create no diff, 11 to add no diff matrix\n\t\t\t\t12 to add some diff matrix\n\n");
+		printf ("SET.C\n\tby spars: operation =\t0 to create no diff, 1 to set no diff matrix\n\t\t\t\t10 to create some diff, 11 to set some diff matrix\n\tby size: operation =\t20 to create no diff, 21 to set no diff matrix\n\t\t\t\t30 to create some diff, 31 to set some diff matrix\n");
+		return -1;
+	}
 	int a = atoi (argv[1]);
 	double start = atof(argv[2]);
 	double end = atof(argv[3]);
@@ -38,8 +44,9 @@ int main(int argc, char ** argv)
 
 	jac** jac_stor = alloc_jac (m,n);
 	add_jac (jac_stor,Fx,r1,c1,v1,size1);
-	array (acc_jac(jac_stor,Fx));
-	if (!(inc_jac (jac_stor,Fx,7,8))) array (acc_jac(jac_stor,Fx));
+	print (acc_jac(jac_stor,Fx));
+	inc_jac (jac_stor,Fx,10,10);
+	print (acc_jac(jac_stor,Fx));
 
 
 	add_jac (jac_stor,Gx,r1,c1,v1,size1);
