@@ -55,7 +55,7 @@ if (!(a%10))
 	if (confirm=='n') return 0;
 }
 
-/*GENERATE MATRIX FILES NO DIFF BY SPARSITY*/
+/*CREATE MATRIX FILES NO DIFF BY SPARSITY*/
 if (a==0)
 {
 	printf ("ND_SET CREATE: matrix: %dx%d, seed: %d, sparse: %.3f to %.3f\n",m,n,seed1,start,end);
@@ -64,7 +64,7 @@ if (a==0)
 	return 0;
 }
 
-/*GENERATE MATRIX FILES SOME DIFF BY SPARSITY*/
+/*CREATE MATRIX FILES SOME DIFF BY SPARSITY*/
 if (a == 10)
 {
 	printf ("SD_SET CREATE: matrix: %dx%d, seed: %d, sparse: %.3f to %.3f\n",m,n,seed1,start,end);
@@ -73,7 +73,7 @@ if (a == 10)
 	return 0;
 }
 
-/*GENERATE MATRIX FILES NO DIFF BY SIZE*/
+/*CREATE MATRIX FILES NO DIFF BY SIZE*/
 else if (a == 20)
 {
 	printf ("ND_SET CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
@@ -82,7 +82,7 @@ else if (a == 20)
 	return 0;
 }
 
-/*GENERATE MATRIX FILES SOME DIFF BY SIZE*/
+/*CREATE MATRIX FILES SOME DIFF BY SIZE*/
 else if (a == 30)
 {
 	printf ("SD_SET CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
