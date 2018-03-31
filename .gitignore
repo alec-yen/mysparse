@@ -2,3 +2,4 @@ main
 *.o
 *.txt
 add_his.c
+.git-old

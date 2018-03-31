@@ -1,24 +1,4 @@
 #include "mysparse.h"
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
-
-/*create matrix file name*/
-char* aname (int rows, double sparsity, int seed)
-{
-	char buffer_rows[10];
-	char buffer_spars[10];
-	char buffer_seed[10];
-	int len = sprintf (buffer_rows,"%05d",rows);
-	len += sprintf (buffer_spars,"%.4f",sparsity);
-	len += sprintf (buffer_seed,"%02d",seed);
-	char* fname = malloc (len+25);
-	strcpy (fname, "data/add_");
-	strcat (fname, buffer_rows); strcat (fname, "_");
-	strcat (fname, buffer_spars); strcat (fname, "_");
-	strcat (fname, buffer_seed); strcat (fname, ".txt");
-	return fname;
-}
 
 /* testing function for add function runtime*/
 /* by spars: operation = 0 to create no diff, 1 to add no diff matrix
@@ -36,7 +16,6 @@ if (  (a!=0)&&(a!=1)&&(a!=10)&&(a!=11)&&(a!=20)&&(a!=21)&&(a!=30)&&(a!=31) )
 {
 	printf ("ERROR: invalid operation %d\n",a); return -1;
 }
-
 if (a < 20)
 {
 	m = s; n = s;
@@ -49,8 +28,8 @@ else
 }
 
 /*VARIABLES*/
-	int seed1 = 2;
-	int seed2 = 3;
+	int seed1 = 2, seed2 = 3;
+	int val1 = 1;
 	int repeat = 500; //how many trials
 
 	FILE *fp1, *fp2, *ft;
@@ -58,7 +37,7 @@ else
 	int j,k;
 	clock_t t1 = clock(), t2 = clock();
 	double tsum1, tsum2, sparsity1, sparsity2, i;
-	char *fname1, *fname2;
+	char *fname1 = NULL, *fname2 = NULL;
 
 /*CALCULATE NEEDED MEMORY TO CREATE*/
 if (!(a%10))
@@ -75,18 +54,35 @@ if (!(a%10))
 	if (confirm=='n') return 0;
 }
 
-
 /*CREATE MATRIX FILES BY SPARSITY*/
 if (a==0)
 {
 	printf ("ND_ADD CREATE: matrix: %dx%d, seed: %d, sparse: %.3f to %.3f\n",m,n,seed1,start,end);
+	for (i=start; i<end+increment; i+=increment) test_create(fname1,m,i,seed1,val1,NULL,1,1,1,0);
+	return 0;
+}
+
+/*CREATE MATRICES OF DIFF INDEX BY SPARSITY*/
+else if (a==10)
+{
+	printf ("SD_ADD CREATE: matrix: %dx%d, seed: %d, sparse: %.3f to %.3f\n",m,n,seed1,start,end);
+	for (i=start; i<end+increment; i+=increment) test_create (fname1,m,i,seed1,val1,fname2,i,seed2,val1,1);
+}
+
+/*CREATE MATRIX FILES BY SIZE*/
+else if (a==20)
+{
+	printf ("ND_ADD CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
+	for (i=start; i<end+increment; i+=increment) test_create(fname1,i,spars,seed1,val1,NULL,1,1,1,0);
+	return 0;
+}
+
+/*CREATE MATRICES OF DIFF INDEX BY SIZE*/
+else if (a==30)
+{
+	printf ("SD_ADD CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
 	for (i=start; i<end+increment; i+=increment)
-	{
-		fname1 = aname (m,i,seed1);
-		frandmat (fname1,m,n,i,seed1,1);
-		printf ("%s\n",fname1);
-		free (fname1);
-	}
+		test_create(fname1,i,spars,seed1,val1,fname2,spars,seed2,val1,1);
 	return 0;
 }
 
@@ -99,7 +95,7 @@ else if (a==1)
 
 	for (i=start; i<end+increment; i+=increment)
 	{
-		fname1 = aname (m,i,seed1);	
+		fname1 = name (m,i,seed1,val1);	
 		if (!(fp1 = fopen (fname1, "r"))) { free_all (A,B,NULL,fname1,NULL,NULL,ft,1); return -1; }
 
 		T = cs_load (fp1);
@@ -119,7 +115,7 @@ else if (a==1)
 			tsum1 += ((double)t1)/CLOCKS_PER_SEC;
 			tsum2 += ((double)t2)/CLOCKS_PER_SEC;
 
-			for (k=0;k<A->nzmax;k++) A->x[k] = 1;
+			for (k=0;k<A->nzmax;k++) A->x[k] = val1;
 			cs_spfree (B); B = NULL;
 		}
 		printf ("%f %f %f\n",sparsity1,tsum1/repeat, tsum2/repeat);
@@ -129,23 +125,6 @@ else if (a==1)
 	}
 	fclose (ft);
 	return 0;
-}
-
-/*CREATE MATRICES OF DIFF INDEX BY SPARSITY*/
-else if (a==10)
-{
-	printf ("SD_ADD CREATE: matrix: %dx%d, seed: %d, sparse: %.3f to %.3f\n",m,n,seed1,start,end);
-	for (i=start; i<end+increment; i+=increment)
-	{
-		fname1 = aname (m,i,seed1);
-		frandmat (fname1,m,n,i,seed1,1);
-		printf ("%s\n",fname1);
-		free (fname1);
-		fname2 = aname (m,i,seed2);
-		frandmat (fname2,m,n,i,seed2,1);
-		printf ("%s\n",fname2);
-		free (fname2);
-	}
 }
 
 /*ADDING MATRICES OF DIFF INDEX BY SPARSITY*/
@@ -159,8 +138,8 @@ else if (a==11)
 
 	for (i=start; i<end+increment; i+=increment)
 	{
-		fname1 = aname (m,i,seed1);
-		fname2 = aname (m,i,seed2);	
+		fname1 = name (m,i,seed1,val1);
+		fname2 = name (m,i,seed2,val1);	
 		if (!(fp1 = fopen (fname1, "r"))) { free_all (A,B,C,fname1,fname2,NULL,ft,1); return -1; }
 		if (!(fp2 = fopen (fname2, "r"))) { free_all (A,B,C,fname2,fname1,fp1,ft,1); return -1; }
 
@@ -200,20 +179,6 @@ else if (a==11)
 	return 0;
 }
 
-/*CREATE MATRIX FILES BY SIZE*/
-else if (a==20)
-{
-	printf ("ND_ADD CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
-	for (i=start; i<end+increment; i+=increment)
-	{
-		fname1 = aname (i,spars,seed1);
-		frandmat (fname1,i,i,spars,seed1,1);
-		printf ("%s\n",fname1);
-		free (fname1);
-	}
-	return 0;
-}
-
 /*ADDING MATRICES NO DIFF INDEX BY SIZE*/
 else if (a==21)
 {
@@ -223,7 +188,7 @@ else if (a==21)
 
 	for (i=start; i<end+increment; i+=increment)
 	{
-		fname1 = aname (i,spars,seed1);
+		fname1 = name (i,spars,seed1,val1);
 		if (!(fp1 = fopen (fname1, "r"))) { free_all (A,B,NULL,fname1,NULL,NULL,ft,1); return -1; }
 		
 		T = cs_load (fp1);
@@ -242,7 +207,7 @@ else if (a==21)
 			tsum1 += ((double)t1)/CLOCKS_PER_SEC;
 			tsum2 += ((double)t2)/CLOCKS_PER_SEC;
 
-			for (k=0;k<A->nzmax;k++) A->x[k] = 1;
+			for (k=0;k<A->nzmax;k++) A->x[k] = val1;
 			cs_spfree (B); B = NULL;
 		}
 
@@ -255,28 +220,9 @@ else if (a==21)
 	return 0;	
 }
 
-/*CREATE MATRICES OF DIFF INDEX BY SIZE*/
-else if (a==30)
-{
-	printf ("SD_ADD CREATE: spars: %.3f, seed: %d, size: %.0f to %.0f\n",spars,seed1,start,end);
-	for (i=start; i<end+increment; i+=increment)
-	{
-		fname1 = aname (i,spars,seed1);
-		frandmat (fname1,i,i,spars,seed1,1);
-		printf ("%s\n",fname1);
-		free (fname1);
-		fname2 = aname (i,spars,seed2);
-		frandmat (fname2,i,i,spars,seed2,1);
-		printf ("%s\n",fname2);
-		free (fname2);
-	}
-	return 0;
-}
-
 /*ADDING MATRICES OF DIFF INDEX BY SIZE*/
 else if (a==31)
 {
-
 	ft = fopen ("time_add.txt","a");
 	fprintf (ft, "%.3f\nsize id_add cs_add\n",spars);
 	printf ("SD_ADD TEST: spars: %.3f, seeds: %d/%d, trials: %d, size: %.0f to %.0f\n",
@@ -284,8 +230,8 @@ else if (a==31)
 
 	for (i=start; i<end+increment; i+=increment)
 	{
-		fname1 = aname (i,spars,seed1);
-		fname2 = aname (i,spars,seed2);
+		fname1 = name (i,spars,seed1,val1);
+		fname2 = name (i,spars,seed2,val1);
 		if (!(fp1 = fopen (fname1, "r"))) { free_all (A,B,C,fname1,fname2,NULL,ft,1); return -1; }
 		if (!(fp2 = fopen (fname2, "r"))) { free_all (A,B,C,fname2,fname1,fp1,ft,1); return -1; }
 
@@ -322,7 +268,6 @@ else if (a==31)
 	fclose (ft);
 	return 0;
 }
-
 
 return -1;
 }

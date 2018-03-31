@@ -1,5 +1,8 @@
 #include "cs.h"
 #include <stdbool.h>
+#include <stdio.h>
+#include <time.h>
+#include <string.h>
 
 typedef enum 	{ Fx,Fy,Gx,Gy,Fx0,Fy0,Gx0,Gy0} jac_name;	/*names of Jacobian matrices*/
 typedef struct { cs* jac_matrix; int m; int n; } jac;		/*Jacobian struct*/
@@ -41,5 +44,8 @@ int nd_set (cs* A, cs* B);					/*sets matrices if no diff index*/
 cs* sd_set (cs* A, cs* B, bool* nd);				/*sets matrices if some diff index*/
 int diff_s (cs* A, cs* B, bool* nd);				/*returns 2 if some diff, 1 if all diff, 0 otherwise*/
 cs* acc_jac (jac ** jac_stor, jac_name s);			/*returns jac Fx,Fy,etc.*/
-void free_all (cs* A, cs* B, cs* C, char* fname_print, char* fname_other, FILE* fp, FILE* ft, bool bad);
 
+
+void free_all (cs* A, cs* B, cs* C, char* fname_print, char* fname_other, FILE* fp, FILE* ft, bool bad);
+char* name (int rows, double sparsity, int seed, int val);
+void test_create (char* fname1, int m, double spars1, int seed1, int val1, char* fname2, double spars2, int seed2, int val2, int two);
